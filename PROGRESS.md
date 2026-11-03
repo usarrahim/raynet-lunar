@@ -2,7 +2,7 @@
 
 ## Status
 - Current phase: Phase 0 (setup)
-- Next task: P0.3
+- Next task: P0.4 (runner notebook; the data check part is already done on the laptop)
 - Last update: 2026-11-03
 
 ## Decisions so far
@@ -23,6 +23,9 @@
 ## Done
 - P0.1 Repo skeleton (2026-11-03)
 - P0.2 GitHub: https://github.com/usarrahim/raynet-lunar (public, branch `main`) (2026-11-03)
+- P0.3 Data check (2026-11-03): the FULL train + val data is on the laptop (`data/LunarRM`, 9 GB).
+  `check_data` passes. Numbers: `results/p0_check_data.txt`. Figure: `results/figures/p0_samples.png`.
+  This also meets the P0.4 acceptance numbers (25,720 / 2,330 maps per band).
 
 ## Setup checklist
 - [x] `setup/claude-skills/` copied to `.claude/skills/` (2026-11-03)
@@ -44,6 +47,12 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-03 · P0.3 · `src/raynet/check_data.py` (checks 1-7 of docs/01_DATA.md, chunked memmap
+  reads, skips missing files) + `tests/test_check_data.py` (fake dataset). Data folder also has
+  `manifest.json` / `subset_index.csv` (the Kaggle leaderboard is a 100-map val subset, marked
+  "gameable": a format check only) and `val_terrains.txt`. No test inputs yet (December). ·
+  `python -m raynet.check_data --root data/LunarRM` (about 1 min) · PASS; see
+  `results/p0_check_data.txt` (for example 5.8 GHz train valid mean 89.62%, all voids = 145.0 dB).
 - 2026-11-03 · P0.2 · Added remote `origin` and pushed `main`. Commits show only the owner as
   author (no AI co-author lines). · `git push` · Files visible on GitHub.
 - 2026-11-03 · P0.1 · `pyproject.toml` (package `raynet`, src layout, extra `dev`),

@@ -1,0 +1,47 @@
+[INFO] train files: train_index.csv 2.1 MB
+[INFO] train files: train_hm.npy 1604.3 MB
+[INFO] train files: train_pl415.npy 3371.2 MB
+[INFO] train files: train_mask415.npy 210.7 MB
+[INFO] train files: train_pl58.npy 3371.2 MB
+[INFO] train files: train_mask58.npy 210.7 MB
+[OK  ] train length: train_pl415.npy has 25720 rows, index has 25720
+[OK  ] train length: train_mask415.npy has 25720 rows, index has 25720
+[OK  ] train length: train_pl58.npy has 25720 rows, index has 25720
+[OK  ] train length: train_mask58.npy has 25720 rows, index has 25720
+[OK  ] train hm_row: max hm_row 6119, heightmaps 6120
+[OK  ] train height: min 0.00 m, max 495.09 m, non-finite 0
+[OK  ] train pl415 range: min 20.31, max 192.12 dB (metadata [20.0, 193.0]), non-finite 0
+[INFO] train pl415 valid: mean 99.27%, median 99.35%, min 74.31%
+[OK  ] train pl415 near TX: 100.00% of maps have their min PL within 1.0 dB inside the 5x5 px TX window; median TX-window min 29.9 dB
+[OK  ] train pl58 range: min 43.22, max 227.62 dB (metadata [43.0, 228.0]), non-finite 0
+[INFO] train pl58 valid: mean 89.62%, median 96.28%, min 7.47%
+[OK  ] train pl58 voids: 100.00% of 174983634 invalid px are exactly 145.0 dB
+[OK  ] train pl58 near TX: 100.00% of maps have their min PL within 1.0 dB inside the 5x5 px TX window; median TX-window min 52.8 dB
+[INFO] train terrains: 6120 terrains, 25720 maps; 51 TX: 392 terrains, 1 TX: 5728 terrains
+[OK  ] train group: 0 rows disagree with the 'group' column
+[OK  ] train count: 25720 maps, metadata says 25720
+[INFO] val files: val_index.csv 0.2 MB
+[INFO] val files: val_hm.npy 178.3 MB
+[INFO] val files: val_pl415.npy 305.4 MB
+[INFO] val files: val_mask415.npy 19.1 MB
+[INFO] val files: val_pl58.npy 305.4 MB
+[INFO] val files: val_mask58.npy 19.1 MB
+[OK  ] val length: val_pl415.npy has 2330 rows, index has 2330
+[OK  ] val length: val_mask415.npy has 2330 rows, index has 2330
+[OK  ] val length: val_pl58.npy has 2330 rows, index has 2330
+[OK  ] val length: val_mask58.npy has 2330 rows, index has 2330
+[OK  ] val hm_row: max hm_row 679, heightmaps 680
+[OK  ] val height: min 0.00 m, max 443.50 m, non-finite 0
+[OK  ] val pl415 range: min 20.14, max 177.25 dB (metadata [20.0, 193.0]), non-finite 0
+[INFO] val pl415 valid: mean 99.24%, median 99.35%, min 87.14%
+[OK  ] val pl415 near TX: 100.00% of maps have their min PL within 1.0 dB inside the 5x5 px TX window; median TX-window min 29.9 dB
+[OK  ] val pl58 range: min 43.03, max 213.88 dB (metadata [43.0, 228.0]), non-finite 0
+[INFO] val pl58 valid: mean 89.02%, median 95.49%, min 12.85%
+[OK  ] val pl58 voids: 100.00% of 16772627 invalid px are exactly 145.0 dB
+[OK  ] val pl58 near TX: 100.00% of maps have their min PL within 1.0 dB inside the 5x5 px TX window; median TX-window min 52.8 dB
+[INFO] val terrains: 680 terrains, 2330 maps; 51 TX: 33 terrains, 1 TX: 647 terrains
+[OK  ] val group: 0 rows disagree with the 'group' column
+[OK  ] val count: 2330 maps, metadata says 2330
+[SKIP] test: no index file
+[OK  ] figure: saved results\figures\p0_samples.png (val)
+RESULT: PASS

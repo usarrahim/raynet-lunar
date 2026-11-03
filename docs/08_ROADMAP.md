@@ -16,7 +16,7 @@ official Timeline page).
   *Learn:* what a package is, why tests.
 - [x] **P0.2 GitHub [Owner].** Owner makes an empty PUBLIC repo `raynet-lunar`; Claude Code adds the
   remote and pushes. *Accept:* files visible on GitHub.
-- [ ] **P0.3 Local data [Owner].** Owner downloads the val files and `metadata.json` from the
+- [x] **P0.3 Local data [Owner].** Owner downloads the val files and `metadata.json` from the
   Kaggle Data tab into `data/LunarRM/` (list in `docs/01_DATA.md`). Claude Code writes
   `src/raynet/check_data.py` (checks 1-7 in 01_DATA.md; skip checks whose files are missing).
   *Accept:* clean report and `results/figures/p0_samples.png`.
