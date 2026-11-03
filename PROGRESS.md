@@ -24,10 +24,10 @@
 ## In progress
 - P0.4 Colab runner: `notebooks/colab_runner.ipynb` written (pinned to commit `8b5672f`).
   Waiting for the owner: Kaggle token in Colab Secrets, data zip to Drive, first run of the cells.
-- P1.1: dev split done (`splits/dev_terrains.txt`: 20 of 392 multi + 286 of 5728 single terrains,
-  1306 maps per band). Loader (`src/raynet/data.py`) still TBD.
 
 ## Done
+- P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
+  (20 of 392 multi + 286 of 5728 single terrains; 24414 train / 1306 dev / 2330 val maps per band).
 - P0.1 Repo skeleton (2026-11-03)
 - P0.2 GitHub: https://github.com/usarrahim/raynet-lunar (public, branch `main`) (2026-11-03)
 - P0.3 Data check (2026-11-03): the FULL train + val data is on the laptop (`data/LunarRM`, 9 GB).
@@ -54,6 +54,10 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-03 · P1.1 · `LunarRMDataset` (one band, terrain filters, lazy memmaps that are not
+  pickled to workers, 8 dihedral transforms with matching TX coordinates) and `make_datasets`
+  (train minus dev / dev / val). · `pytest -q` · 19 tests pass; laptop reads about 466 maps/s
+  with `num_workers=0`.
 - 2026-11-03 · P0.4 / P1.1 / P1.6 prep · Colab is the main GPU platform: `docs/06_COMPUTE.md`
   rewritten, skill `kaggle-run` → `colab-run`, other docs updated. Official baseline checked
   (commit `fa3ef9b`): `--loss masked` (default) divides by `mask.sum()`; `--init-from` loads

@@ -27,7 +27,7 @@ official Timeline page).
   (already true on the laptop, see P0.3).
 
 ## Phase 1: Data, metrics, physics, first look at errors (weeks 1-2)
-- [ ] **P1.1 Loader + dev split.** `src/raynet/data.py`, `scripts/make_dev_split.py` →
+- [x] **P1.1 Loader + dev split.** `src/raynet/data.py`, `scripts/make_dev_split.py` →
   `splits/dev_terrains.txt` (5% of training terrains, seed 0; the full data is on the laptop, so the script runs
   there; commit the txt file).
   *Tests:* item shapes; augmentation keeps `height[tx]` unchanged; dev terrains do not appear in train.
