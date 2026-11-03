@@ -49,18 +49,24 @@ augmentation. Log it.
 | **Total** | | **≈ 29 h** |
 Colab units are the main budget; the free Kaggle GPU quota is the reserve. Track the real hours in `PROGRESS.md`.
 
-## Results table (fill only from `val_summary.json` files)
-| ID | 415 MHz RMSE (dB) | 5.8 GHz RMSE (dB) | Combined | NLOS 5.8 | Border 5.8 | Params | ms/map |
+## Results table (frozen val split; made by `python scripts/make_results_table.py`)
+Do not edit the table by hand: the script reads every `val_summary.json` in `results/eval/`
+and `runs/`. RMSE is pooled over valid pixels; "± x" is the std over seeds. Speed (ms/map) is
+measured separately in task P4.3.
+<!-- results-table:start -->
+| ID | 415 MHz RMSE (dB) | 5.8 GHz RMSE (dB) | Combined | NLOS core 5.8 | Border 5.8 | Params (per band) | Seeds |
 |---|---|---|---|---|---|---|---|
-| E0 | TBD | TBD | TBD | TBD | TBD | 13.27M | TBD |
-| E1 | TBD | TBD | TBD | TBD | TBD | 0 | TBD |
-| E1b | TBD | TBD | TBD | TBD | TBD | 10 | TBD |
-| E2 | - | TBD | - | TBD | TBD | TBD | TBD |
-| E3 | TBD | TBD ± TBD | TBD | TBD | TBD | TBD | TBD |
-| E4 | TBD | TBD ± TBD | TBD | TBD | TBD | TBD | TBD |
-| E5a | - | TBD | - | TBD | TBD | TBD | TBD |
-| E5b | - | TBD | - | TBD | TBD | TBD | TBD |
-| E6 | TBD | TBD | TBD | TBD | TBD | = best | TBD |
+| E0 | TBD | TBD | TBD | TBD | TBD | TBD | - |
+| E1 | 7.45 | 13.11 | 10.28 | 30.09 | 24.88 | 0 | 1 |
+| E1b | 5.57 | 6.96 | 6.26 | 9.45 | 13.92 | 5 | 1 |
+| E2 | - | TBD | - | TBD | TBD | TBD | - |
+| E3 | TBD | TBD | TBD | TBD | TBD | TBD | - |
+| E4 | TBD | TBD | TBD | TBD | TBD | TBD | - |
+| E5a | - | TBD | - | TBD | TBD | TBD | - |
+| E5b | - | TBD | - | TBD | TBD | TBD | - |
+| E6 | TBD | TBD | TBD | TBD | TBD | TBD | - |
+<!-- results-table:end -->
+
 Reference only (hidden test set, 450+150 epochs, not comparable): RadioUNet 4.66 / 6.28 / 5.47 dB.
 
 ## What to do if results are surprising

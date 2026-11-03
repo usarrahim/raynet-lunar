@@ -38,10 +38,10 @@ official Timeline page).
 - [x] **P1.3 Physics module.** `src/raynet/physics.py` from `docs/reference/physics_prototype.py`
   + all tests of docs/02_PHYSICS.md §9. *Accept:* all tests pass on CPU.
   *Learn:* FSPL, knife-edge, polar grid, horizon scan, why not `torch.cummax` in export.
-- [ ] **P1.4 Evaluation script.** `src/raynet/evaluate.py` (+ `PriorModel` for E1). Writes
+- [x] **P1.4 Evaluation script.** `src/raynet/evaluate.py` (+ `PriorModel` for E1). Writes
   `val_per_map.csv` and `val_summary.json` (docs/05_EVALUATION.md). *Accept:* runs locally on the
   val files with E1.
-- [ ] **P1.5 E1 and E1b [laptop or Colab].** Evaluate the prior on dev and val
+- [x] **P1.5 E1 and E1b [laptop or Colab].** Evaluate the prior on dev and val
   for both bands; fit E1b on dev → `results/e1b_coeffs.json`.
   *Accept:* results table rows E1, E1b filled. *Learn:* why physics alone is weak in shadow here
   (diffraction is off in the data).

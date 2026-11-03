@@ -30,6 +30,10 @@
   (20 of 392 multi + 286 of 5728 single terrains; 24414 train / 1306 dev / 2330 val maps per band).
 - P1.2 Metrics (2026-11-03): `src/raynet/metrics.py`.
 - P1.3 Physics (2026-11-03): `src/raynet/physics.py`, all tests of docs/02_PHYSICS.md §9 pass.
+- P1.4 Evaluation (2026-11-03): `python -m raynet.evaluate`, writes `<split>_per_map.csv` and
+  `<split>_summary.json`. Results table is made by `scripts/make_results_table.py`.
+- P1.5 E1 and E1b (2026-11-03): coefficients in `results/e1b_coeffs.json` (fit on dev only);
+  summaries in `results/eval/E1*_*/`. Table rows E1, E1b filled (see docs/04_EXPERIMENTS.md).
 - P0.1 Repo skeleton (2026-11-03)
 - P0.2 GitHub: https://github.com/usarrahim/raynet-lunar (public, branch `main`) (2026-11-03)
 - P0.3 Data check (2026-11-03): the FULL train + val data is on the laptop (`data/LunarRM`, 9 GB).
@@ -56,6 +60,17 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-03 · P1.4 + P1.5 · `PriorModel` (E1, E1b), `raynet.calibrate` (least squares on
+  all valid dev pixels, float64 normal equations), `raynet.evaluate`, `raynet.results_table`.
+  Laptop GPU (RTX 3050 Ti): 2330 val maps in about 8 s. · `python -m raynet.calibrate
+  --data-root data/LunarRM`, then `python -m raynet.evaluate --model e1b --band 58 --split val
+  --data-root data/LunarRM`, then `python scripts/make_results_table.py` · Val results
+  (from `results/eval/*/val_summary.json`): E1 7.45 / 13.11 dB, E1b 5.57 / 6.96 dB
+  (415 / 5.8 GHz). E1b 5.8 GHz val: border + nlos_core are 18.7% of valid pixels but 51.9% of
+  the squared error. E1b coefficients (`results/e1b_coeffs.json`): NLOS adds about 13 dB
+  (415) and 18 dB (5.8) on top of FSPL, as expected with diffraction off. At 415 MHz almost no
+  valid pixel is above 120 dB, so coverage F1 at that threshold is not informative; use the
+  threshold sweep.
 - 2026-11-03 · P1.3 · `PhysicsFeatures` from the verified prototype (same maths), split into
   `polar()` (polar maps incl. inside-tile mask, for RayNet later), `to_cartesian()` and
   `forward()`; `scan_max_inclusive` added for the learned scan. Tests: vectors, scan = cummax

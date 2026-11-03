@@ -77,13 +77,13 @@ def write_outputs(acc: MetricAccumulator, out_dir: Path, split: str, info: dict)
     return summary
 
 
-def build_predictor(args: argparse.Namespace, device: str) -> tuple[Predictor, str]:
-    """Model from the command line arguments; returns (predictor, model name)."""
+def build_predictor(args: argparse.Namespace, device: str) -> tuple[Predictor, str, int]:
+    """Model from the command line arguments; returns (predictor, name, parameter count)."""
     if args.model == "e1":
-        return prior_predictor(PriorModel().to(device).eval()), "E1"
+        return prior_predictor(PriorModel().to(device).eval()), "E1", 0
     if args.model == "e1b":
         coeffs = load_e1b_coeffs(args.coeffs)[args.band]
-        return prior_predictor(PriorModel(coeffs).to(device).eval()), "E1b"
+        return prior_predictor(PriorModel(coeffs).to(device).eval()), "E1b", len(coeffs)
     raise SystemExit(f"unknown model {args.model!r}")
 
 
@@ -103,13 +103,14 @@ def main(argv: list[str] | None = None) -> dict:
     p.add_argument("--max-batches", type=int, default=None, help="for smoke tests")
     args = p.parse_args(argv)
 
-    predict, name = build_predictor(args, args.device)
+    predict, name, params = build_predictor(args, args.device)
     ds = make_datasets(args.data_root, args.band, args.dev_file, augment=False)[args.split]
     t0 = time.time()
     acc = evaluate(predict, ds, args.band, args.device, args.batch_size, args.num_workers,
                    args.max_batches)
     seconds = time.time() - t0
-    info = {"model": name, "band": args.band, "split": args.split, "commit": git_commit(),
+    info = {"model": name, "band": args.band, "split": args.split, "params": params,
+            "commit": git_commit(),
             "device": device_name(args.device), "eval_seconds": round(seconds, 1),
             "smoke_test": args.max_batches is not None}
     out = args.out or Path("results/eval") / f"{name}_{args.band}"
