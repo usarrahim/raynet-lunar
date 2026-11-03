@@ -75,18 +75,18 @@ class PhysicsFeatures(nn.Module):
 
     def __init__(self, size: int = 256, n_theta: int = 720, dr: float = 1.0,
                  r_max: float = 363.0) -> None:
-        """Build the fixed polar and Cartesian grids (buffers)."""
+        """Build the fixed polar and Cartesian grids (buffers, not saved in checkpoints)."""
         super().__init__()
         self.size, self.n_theta, self.dr = size, n_theta, dr
         self.n_r = math.ceil(r_max / dr)
         th = 2 * math.pi * torch.arange(n_theta, dtype=torch.float32) / n_theta
         ii, jj = torch.meshgrid(torch.arange(size, dtype=torch.float32),
                                 torch.arange(size, dtype=torch.float32), indexing="ij")
-        self.register_buffer("r", (torch.arange(self.n_r, dtype=torch.float32) + 1) * dr)
-        self.register_buffer("cos", torch.cos(th))
-        self.register_buffer("sin", torch.sin(th))
-        self.register_buffer("ii", ii)
-        self.register_buffer("jj", jj)
+        grids = {"r": (torch.arange(self.n_r, dtype=torch.float32) + 1) * dr,
+                 "cos": torch.cos(th), "sin": torch.sin(th),
+                 "ii": ii.contiguous(), "jj": jj.contiguous()}
+        for name, value in grids.items():
+            self.register_buffer(name, value, persistent=False)
 
     def tx_height(self, height: torch.Tensor, tx: torch.Tensor) -> torch.Tensor:
         """TX antenna height z_tx = H(tx) + 3 m, shape (B, 1, 1)."""

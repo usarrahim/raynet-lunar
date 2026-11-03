@@ -6,6 +6,7 @@ Regions (LoS / border / NLOS) always use the physics LoS on the fine grid (T = 7
 Examples:
   python -m raynet.evaluate --model e1  --band 58 --split dev --data-root data/LunarRM
   python -m raynet.evaluate --model e1b --band 58 --split val --data-root data/LunarRM
+  python -m raynet.evaluate --run runs/E3_58_s0 --split val --data-root data/LunarRM
 """
 
 from __future__ import annotations
@@ -23,6 +24,8 @@ from torch.utils.data import DataLoader, Dataset
 from raynet.data import BANDS, make_datasets
 from raynet.metrics import MetricAccumulator
 from raynet.models.prior import PriorModel, load_e1b_coeffs
+from raynet.models.unet import count_params
+from raynet.models.wrapper import PathlossNet
 from raynet.physics import BAND_HZ, PhysicsFeatures
 from raynet.run_info import device_name, git_commit
 from raynet.splits import DEV_FILE
@@ -77,23 +80,44 @@ def write_outputs(acc: MetricAccumulator, out_dir: Path, split: str, info: dict)
     return summary
 
 
+def run_predictor(run_dir: Path, device: str) -> tuple[Predictor, str, int, str]:
+    """Trained model from runs/<name>/last.pt (the LAST checkpoint, never best_dev.pt)."""
+    ck = torch.load(run_dir / "last.pt", map_location=device, weights_only=False)
+    model = PathlossNet.from_config(ck["model_config"]).to(device).eval()
+    model.load_state_dict(ck["model"])
+    done, planned = ck["epoch"] + 1, ck["cfg"]["train"]["epochs"]
+    if done != planned:
+        print(f"WARNING: {run_dir.name} has {done} of {planned} epochs (not finished)")
+
+    def predict(h: torch.Tensor, tx: torch.Tensor, f: torch.Tensor):
+        return model(h, tx), None
+
+    return predict, run_dir.name, count_params(model), ck["model_config"]["band"]
+
+
 def build_predictor(args: argparse.Namespace, device: str) -> tuple[Predictor, str, int]:
     """Model from the command line arguments; returns (predictor, name, parameter count)."""
+    if args.run:
+        predict, name, params, args.band = run_predictor(args.run, device)
+        return predict, name, params
+    if args.band is None:
+        raise SystemExit("--band is needed with --model")
     if args.model == "e1":
         return prior_predictor(PriorModel().to(device).eval()), "E1", 0
     if args.model == "e1b":
         coeffs = load_e1b_coeffs(args.coeffs)[args.band]
         return prior_predictor(PriorModel(coeffs).to(device).eval()), "E1b", len(coeffs)
-    raise SystemExit(f"unknown model {args.model!r}")
+    raise SystemExit("give --model e1|e1b or --run runs/<name>")
 
 
 def main(argv: list[str] | None = None) -> dict:
     """Command line entry point; returns the summary dict."""
     p = argparse.ArgumentParser(description="Evaluate a model with the project metrics.")
     p.add_argument("--data-root", type=Path, required=True)
-    p.add_argument("--model", choices=["e1", "e1b"], required=True)
+    p.add_argument("--model", choices=["e1", "e1b"], default=None)
+    p.add_argument("--run", type=Path, default=None, help="trained run folder (uses last.pt)")
     p.add_argument("--coeffs", type=Path, default=Path("results/e1b_coeffs.json"))
-    p.add_argument("--band", choices=list(BANDS), required=True)
+    p.add_argument("--band", choices=list(BANDS), default=None, help="taken from the run")
     p.add_argument("--split", choices=["dev", "val"], required=True)
     p.add_argument("--dev-file", type=Path, default=DEV_FILE)
     p.add_argument("--out", type=Path, default=None, help="default results/eval/<model>_<band>")
@@ -113,7 +137,7 @@ def main(argv: list[str] | None = None) -> dict:
             "commit": git_commit(),
             "device": device_name(args.device), "eval_seconds": round(seconds, 1),
             "smoke_test": args.max_batches is not None}
-    out = args.out or Path("results/eval") / f"{name}_{args.band}"
+    out = args.out or (args.run if args.run else Path("results/eval") / f"{name}_{args.band}")
     s = write_outputs(acc, out, args.split, info)
     reg = s.get("regions", {})
     print(f"{name} {args.band} {args.split}: RMSE {s['rmse_db']:.3f} dB, bias {s['bias_db']:.3f}"

@@ -1,0 +1,6 @@
+# E2: U-Net with the 9 physics channels, direct prediction (no residual).
+base: base.yaml
+id: E2
+band: "58"
+model:
+  kind: e2

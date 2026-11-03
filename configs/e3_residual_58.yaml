@@ -1,0 +1,6 @@
+# E3: U-Net with the 9 physics channels + residual on the E1b prior (control for H1).
+base: base.yaml
+id: E3
+band: "58"
+model:
+  kind: e3

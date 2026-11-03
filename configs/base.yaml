@@ -1,0 +1,26 @@
+# Shared training budget for all trained experiments (docs/03_MODEL.md, "Training defaults").
+# Experiments override only what they test. Run name = <id>_<band>_s<seed>.
+# epochs and model.width are set in task P2.2 from the speed test (see PROGRESS.md);
+# until then they are PROVISIONAL.
+id: E3
+band: "58"
+seed: 0
+model:
+  kind: e3          # e2 = direct, e3 = residual on the E1b prior
+  width: 32         # PROVISIONAL (24 or 32, chosen in P2.2)
+train:
+  epochs: 30        # PROVISIONAL (chosen in P2.2 so that one 5.8 GHz run takes about 1.5 h)
+  batch_size: 16
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  warmup_epochs: 1
+  lr_min: 1.0e-5
+  grad_clip: 1.0
+  amp: true
+  augment: true     # 8 dihedral transforms, train only
+  num_workers: 4
+data:
+  dev_file: splits/dev_terrains.txt
+  e1b_coeffs: results/e1b_coeffs.json
+eval:
+  dev_every: 1      # dev RMSE every N epochs (monitor only, no early stopping)
