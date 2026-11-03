@@ -2,7 +2,8 @@
 
 ## Status
 - Current phase: Phase 0 (setup)
-- Next task: P0.4 (runner notebook; the data check part is already done on the laptop)
+- Next task: P0.4 owner steps on Colab (Secrets, data zip to Drive), then the P1.6 training run
+  (moved earlier, owner approved 2026-11-03). In parallel on the laptop: P1.1 loader.
 - Last update: 2026-11-03
 
 ## Decisions so far
@@ -19,6 +20,12 @@
 - 2026-11-03: Website plan: static site + onnxruntime-web. The physics part was tested in a
   browser (WASM): about 70 ms per map, 0.0002 dB difference to Python. Preview page in
   `web/prototype/index.html`.
+
+## In progress
+- P0.4 Colab runner: `notebooks/colab_runner.ipynb` written (pinned to commit `8b5672f`).
+  Waiting for the owner: Kaggle token in Colab Secrets, data zip to Drive, first run of the cells.
+- P1.1: dev split done (`splits/dev_terrains.txt`: 20 of 392 multi + 286 of 5728 single terrains,
+  1306 maps per band). Loader (`src/raynet/data.py`) still TBD.
 
 ## Done
 - P0.1 Repo skeleton (2026-11-03)
@@ -47,6 +54,15 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-03 · P0.4 / P1.1 / P1.6 prep · Colab is the main GPU platform: `docs/06_COMPUTE.md`
+  rewritten, skill `kaggle-run` → `colab-run`, other docs updated. Official baseline checked
+  (commit `fa3ef9b`): `--loss masked` (default) divides by `mask.sum()`; `--init-from` loads
+  weights only, but `auto` prefers `_best.pt` (chosen on val) → our wrapper refuses `auto`.
+  The official script trains on all train terrains and validates on `val` every epoch →
+  `raynet.official_wrap` / `scripts/run_official.py` removes the dev terrains from training
+  and uses them as the monitor set. Dev split made (`scripts/make_dev_split.py`). ·
+  Local GPU smoke test of both official stages through the wrapper: 24414 train / 1306 dev
+  samples, runs end to end. · 13 tests pass.
 - 2026-11-03 · P0.3 · `src/raynet/check_data.py` (checks 1-7 of docs/01_DATA.md, chunked memmap
   reads, skips missing files) + `tests/test_check_data.py` (fake dataset). Data folder also has
   `manifest.json` / `subset_index.csv` (the Kaggle leaderboard is a 100-map val subset, marked
