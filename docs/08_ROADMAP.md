@@ -32,7 +32,7 @@ official Timeline page).
   there; commit the txt file).
   *Tests:* item shapes; augmentation keeps `height[tx]` unchanged; dev terrains do not appear in train.
   *Learn:* data leakage and why we split by terrain.
-- [ ] **P1.2 Metrics.** `src/raynet/metrics.py`: pooled masked RMSE, per-map RMSE, region masks,
+- [x] **P1.2 Metrics.** `src/raynet/metrics.py`: pooled masked RMSE, per-map RMSE, region masks,
   coverage accuracy. *Tests:* tiny hand-made arrays with known answers.
   *Learn:* pooled vs per-map RMSE; why masked.
 - [ ] **P1.3 Physics module.** `src/raynet/physics.py` from `docs/reference/physics_prototype.py`
