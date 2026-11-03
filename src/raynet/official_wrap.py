@@ -11,11 +11,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
+from raynet.run_info import git_commit
 from raynet.splits import DEV_FILE, load_terrains
 
 
@@ -57,16 +57,6 @@ def make_loaders_factory(dev: set[str], info: dict):
                 DataLoader(dev_ds, shuffle=False, **dl), train_ds)
 
     return make_loaders
-
-
-def git_commit(path: Path) -> str:
-    """Short git commit hash of a folder, or 'unknown'."""
-    try:
-        out = subprocess.run(["git", "-C", str(path), "rev-parse", "--short", "HEAD"],
-                             capture_output=True, text=True, check=True)
-        return out.stdout.strip()
-    except (OSError, subprocess.CalledProcessError):
-        return "unknown"
 
 
 def finish_official_args(a: argparse.Namespace) -> argparse.Namespace:
