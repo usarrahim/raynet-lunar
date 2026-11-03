@@ -35,7 +35,7 @@ official Timeline page).
 - [x] **P1.2 Metrics.** `src/raynet/metrics.py`: pooled masked RMSE, per-map RMSE, region masks,
   coverage accuracy. *Tests:* tiny hand-made arrays with known answers.
   *Learn:* pooled vs per-map RMSE; why masked.
-- [ ] **P1.3 Physics module.** `src/raynet/physics.py` from `docs/reference/physics_prototype.py`
+- [x] **P1.3 Physics module.** `src/raynet/physics.py` from `docs/reference/physics_prototype.py`
   + all tests of docs/02_PHYSICS.md §9. *Accept:* all tests pass on CPU.
   *Learn:* FSPL, knife-edge, polar grid, horizon scan, why not `torch.cummax` in export.
 - [ ] **P1.4 Evaluation script.** `src/raynet/evaluate.py` (+ `PriorModel` for E1). Writes

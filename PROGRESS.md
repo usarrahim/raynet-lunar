@@ -29,6 +29,7 @@
 - P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
   (20 of 392 multi + 286 of 5728 single terrains; 24414 train / 1306 dev / 2330 val maps per band).
 - P1.2 Metrics (2026-11-03): `src/raynet/metrics.py`.
+- P1.3 Physics (2026-11-03): `src/raynet/physics.py`, all tests of docs/02_PHYSICS.md §9 pass.
 - P0.1 Repo skeleton (2026-11-03)
 - P0.2 GitHub: https://github.com/usarrahim/raynet-lunar (public, branch `main`) (2026-11-03)
 - P0.3 Data check (2026-11-03): the FULL train + val data is on the laptop (`data/LunarRM`, 9 GB).
@@ -55,6 +56,12 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-03 · P1.3 · `PhysicsFeatures` from the verified prototype (same maths), split into
+  `polar()` (polar maps incl. inside-tile mask, for RayNet later), `to_cartesian()` and
+  `forward()`; `scan_max_inclusive` added for the learned scan. Tests: vectors, scan = cummax
+  (R 256 and 363), flat, wall, LoS vs brute force on 20 real dev terrains (thresholds 99.0% /
+  98.5% pass), rotation, ONNX parity (dynamo, opset 18, one file, ≤ 0.01 dB). ·
+  `pytest -q` (physics tests take about 1.5 min) · all pass.
 - 2026-11-03 · P1.2 · `MetricAccumulator`: pooled masked RMSE (divided by the valid pixel
   count), bias, per-map rows, all-pixel RMSE (diagnostic), regions los_core / border (3 px
   Euclidean around LoS changes) / nlos_core, distance bins, coverage accuracy and F1 of
