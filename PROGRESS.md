@@ -22,8 +22,9 @@
   `web/prototype/index.html`.
 
 ## In progress
-- P0.4 Colab runner: `notebooks/colab_runner.ipynb` written (pinned to commit `1d2db99`).
-  Waiting for the owner: Kaggle token in Colab Secrets, data zip to Drive, first run of the cells.
+- P0.4 Colab runner: `notebooks/colab_runner.ipynb` ready (uses `main`; runs log the exact
+  commit). Data comes from Kaggle straight to the Colab disk, a zip copy is kept on Drive.
+  The owner starts it on 2026-11-04 (morning): Secrets → sections 1-4 → 5 (speed test) → 6 (P1.6).
 - P2.2 Training loop: code done and smoke-tested on the laptop. Waiting for the Colab speed
   test (notebook section 6) to fix `epochs` and `model.width` in `configs/base.yaml`
   (both PROVISIONAL now).

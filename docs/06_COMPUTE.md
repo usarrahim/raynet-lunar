@@ -12,79 +12,60 @@ Decision (2026-11-03): **Colab is the main GPU platform.** Kaggle is only the da
 | Kaggle | download the data once; backup GPU | main training |
 
 ## The loop
-1. Claude Code changes code on the laptop → `pytest -q` → CPU smoke test.
-2. Commit and push to GitHub. Note the commit hash.
-3. On Colab: `notebooks/colab_runner.ipynb` clones the repo at that commit, copies the data
-   from Drive to `/content`, and starts the run. The run folder is on Drive.
-4. The run writes `last.pt` to Drive after **every epoch**. If the runtime stops, start the
-   notebook again with `--resume auto`; the run continues from the last epoch.
-5. Copy the run folder (without `*.pt`) from Drive to `runs/` on the laptop and tell Claude Code
-   "E4_58_s0 bitti, sonuçlar runs/ içinde" → it updates `PROGRESS.md`.
+1. Claude Code changes code on the laptop → `pytest -q` → CPU smoke test → commit and push.
+2. On Colab: `notebooks/colab_runner.ipynb` pulls the code (`main` by default; every run writes
+   the exact commit hash to `git_commit.txt` and `summary.json`), gets the data to the local
+   disk, and starts the run. The run folder is on Drive.
+3. The run writes `last.pt` to Drive after **every epoch**. If the runtime stops, run the
+   notebook again from the top; `--resume auto` continues from the last finished epoch.
+4. Copy the run folder (without `*.pt`) from Drive to `runs/` on the laptop, or ask Claude Code
+   to read it from Drive, and say "E3_58_s0 bitti" → it updates `PROGRESS.md`.
 
 ## Folders on Google Drive
 ```
 MyDrive/raynet/
-  data/LunarRM.zip     the competition zip (downloaded once from Kaggle)
-  runs/<run_name>/     run folders (config, metrics, last.pt, ...)
-  official_runs/       checkpoints of the official baseline code (E0, P1.6)
+  data/LunarRM.zip     copy of the competition zip (made by the notebook the first time)
+  runs/<run_name>/     our run folders (config, metrics, summary, last.pt, eval files)
+  official_runs/       official baseline code runs (E0, P1.6)
 ```
+
+## Data: nothing is uploaded from the laptop
+The data cell of the notebook does this:
+1. Data already on the local disk (same session) → nothing to do.
+2. Zip on Drive (from an earlier session) → copy to `/content` (fast) and unzip.
+3. First time → download from Kaggle (token from Colab Secrets) to `/content`, unzip, and keep a
+   copy of the zip on Drive for the next sessions.
+Training always reads from the local disk (`/content/data/LunarRM`), never from Drive: Drive is
+too slow for memory maps.
 
 ## One-time setup [Owner]
 1. Kaggle: accept the competition rules (already done if you downloaded the data).
-2. Kaggle → Settings → API → create a token. You get either a `kaggle.json` file (username +
-   key) or one API token string.
-3. Colab → left bar → key icon (**Secrets**). Add:
-   - `KAGGLE_USERNAME` and `KAGGLE_KEY` (the two values inside `kaggle.json`), **or**
-   - `KAGGLE_API_TOKEN` (the token string).
+2. Kaggle → Settings → API → create a token. You get either one API token string or a
+   `kaggle.json` file (username + key).
+3. Colab → left bar → key icon (**Secrets**). Add `KAGGLE_API_TOKEN` (the token string), **or**
+   `KAGGLE_USERNAME` and `KAGGLE_KEY` (the two values inside `kaggle.json`).
    Turn on "Notebook access" for each secret. Never put the token in a notebook cell or in git.
-4. Open `notebooks/colab_runner.ipynb` from GitHub in Colab (File → Open notebook → GitHub).
-5. Run the "data to Drive (once)" cell. It downloads the zip (about 10 GB) to Drive.
 
 ## Every session
-1. Runtime → Change runtime type → GPU. Choose the cheapest GPU that is fast enough
+1. Open `notebooks/colab_runner.ipynb` from GitHub in Colab (File → Open notebook → GitHub →
+   `usarrahim/raynet-lunar`).
+2. Runtime → Change runtime type → GPU. Choose the cheapest GPU that is fast enough
    (measured in task P2.2). Check the units per hour in Colab.
-2. Run the cells in order: GPU check → mount Drive → clone repo at the commit → copy and unzip
-   data to `/content/data/LunarRM` → `check_data` (quick) → smoke test → the real run.
-3. Keep the browser tab open during a run. Disconnect the runtime when you are done
+3. Run the cells from the top: GPU check → Drive → code → data → data check → the section you
+   need (speed test, P1.6, or our experiments).
+4. Keep the browser tab open during a run. Disconnect the runtime when you are done
    (Runtime → Disconnect and delete runtime), so it does not use units.
-4. Write the GPU hours in the log in `PROGRESS.md`.
+5. Write the GPU hours in the log in `PROGRESS.md`.
 
-## Notebook cells (template; the real file is `notebooks/colab_runner.ipynb`)
-```python
-# 1. GPU check
-!nvidia-smi
-import sys, torch; print(sys.version, torch.__version__, torch.cuda.is_available())
-```
-```python
-# 2. Drive and the run settings
-from google.colab import drive
-drive.mount("/content/drive")
-DRIVE = "/content/drive/MyDrive/raynet"
-COMMIT = "<commit-hash>"
-```
-```python
-# 3. code at the tested commit
-!git clone https://github.com/usarrahim/raynet-lunar.git /content/raynet-lunar
-%cd /content/raynet-lunar
-!git checkout {COMMIT}
-!pip install -q -e .
-```
-```python
-# 4. data: Drive zip -> local disk (memmaps need a fast local disk)
-!mkdir -p /content/data/LunarRM
-!cp {DRIVE}/data/LunarRM.zip /content/data/
-!unzip -q -o /content/data/LunarRM.zip -d /content/data/LunarRM
-DATA = "/content/data/LunarRM"
-```
-```python
-# 5. smoke test, then the real run (run folder on Drive, resume after a disconnect)
-!python -m raynet.train --config configs/e4_raynet_58.yaml --data-root {DATA} --epochs 1 --limit-batches 3 --out /content/smoke --run-name smoke
-!python -m raynet.train --config configs/e4_raynet_58.yaml --data-root {DATA} --seed 0 --out {DRIVE}/runs --resume auto
-```
-```python
-# 6. evaluate the last checkpoint
-!python -m raynet.evaluate --run {DRIVE}/runs/E4_58_s0 --split val --data-root {DATA}
-```
+## Notebook sections
+| Section | What | GPU time |
+|---|---|---|
+| 1-4 | GPU check, Drive, code, data (+ full data check) | none (first time: download) |
+| 5 | P2.2 speed test, E3 width 24 and 32, 300 steps each | about 10 min |
+| 6 | P1.6 official RadioUNet, 5.8 GHz, 10 epochs, stage 1 | TBD (first epoch tells) |
+| 7 | our experiments: pick `CONFIG` and `SEED`; train, then evaluate dev and val | about 1.5 h per run (target) |
+| 8 | list what is on Drive | none |
+Section 7 refuses to start while `configs/base.yaml` still says PROVISIONAL.
 
 ## E0 and P1.6 (official baseline code)
 Facts from the official `train.py` (checked 2026-11-03, commit `fa3ef9b`):
