@@ -15,7 +15,7 @@
 
 ## First session only
 - If `.claude/skills/` does not exist yet, copy every folder in `setup/claude-skills/` to
-  `.claude/skills/` (same names: next-task, explain, check, kaggle-run, add-result). Then tell
+  `.claude/skills/` (same names: next-task, explain, check, colab-run, add-result). Then tell
   the owner to start a new session, so the `/` commands appear. Keep `setup/` as a backup.
 
 ## How to work with the owner
@@ -71,8 +71,11 @@
 
 ## Where things run
 - Laptop (Windows): coding, unit tests, CPU smoke tests on a small data subset, website.
-- Kaggle notebook with GPU: all real training. The notebook clones this repo from GitHub and runs
-  `python -m raynet.train ...`. Colab Pro is the backup. Details: `docs/06_COMPUTE.md`.
+- Colab notebook with GPU (`notebooks/colab_runner.ipynb`): all real training. It clones this repo
+  from GitHub, copies the data from Drive to `/content`, and runs `python -m raynet.train ...`
+  with the run folder on Drive and `--resume auto`. Kaggle is only the data source and a backup
+  GPU. Details: `docs/06_COMPUTE.md`.
+- The laptop has the full dataset in `data/LunarRM/` (train + val, 9 GB).
 - Before any GPU run, do a CPU smoke test (`--limit-batches 3 --epochs 1`).
 
 ## Commands (update this list when you add commands)
@@ -93,7 +96,7 @@
 - `docs/03_MODEL.md`: models E0-E6, shapes, parameter budget
 - `docs/04_EXPERIMENTS.md`: experiment table, budget, seeds, run names, results table
 - `docs/05_EVALUATION.md`: metrics, LoS/NLOS/border regions, statistics, timing
-- `docs/06_COMPUTE.md`: Kaggle and Colab workflow, GPU budget
+- `docs/06_COMPUTE.md`: Colab workflow (Kaggle backup), GPU budget
 - `docs/07_WEBSITE.md`: demo website specification
 - `docs/08_ROADMAP.md`: ordered tasks with acceptance criteria
 - `docs/09_REPORT_GUIDE.md`: final report and presentation

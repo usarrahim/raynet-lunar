@@ -77,7 +77,7 @@ Official rules we follow:
 - Augmentation (train only): the 8 dihedral transforms (flips + 90° rotations), applied to height,
   pl, mask, and the TX coordinates in the same way. Test: after a transform, `height[tx]` is the
   same value as before.
-- Kaggle: `num_workers=2..4`, `pin_memory=True`, `persistent_workers=True`. Windows laptop:
+- Colab / Kaggle: `num_workers=2..4`, `pin_memory=True`, `persistent_workers=True`. Windows laptop:
   `num_workers=0`.
 
 ## Local development data (laptop)

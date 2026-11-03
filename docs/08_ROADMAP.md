@@ -21,14 +21,15 @@ official Timeline page).
   `src/raynet/check_data.py` (checks 1-7 in 01_DATA.md; skip checks whose files are missing).
   *Accept:* clean report and `results/figures/p0_samples.png`.
   *Learn:* the file format, masks, why memory maps.
-- [ ] **P0.4 Kaggle runner [Owner].** `notebooks/kaggle_runner.ipynb` (docs/06_COMPUTE.md). Owner
-  runs `check_data` on the full data on Kaggle (CPU is enough).
-  *Accept:* 25,720 / 2,330 maps per band and valid fractions as in 01_DATA.md.
+- [ ] **P0.4 Colab runner [Owner].** `notebooks/colab_runner.ipynb` (docs/06_COMPUTE.md). Owner
+  adds the Kaggle token to Colab Secrets, puts the data zip on Drive once, and runs `check_data`
+  on Colab. *Accept:* 25,720 / 2,330 maps per band and valid fractions as in 01_DATA.md
+  (already true on the laptop, see P0.3).
 
 ## Phase 1: Data, metrics, physics, first look at errors (weeks 1-2)
 - [ ] **P1.1 Loader + dev split.** `src/raynet/data.py`, `scripts/make_dev_split.py` →
-  `splits/dev_terrains.txt` (5% of training terrains, seed 0; the split script runs on Kaggle
-  because it needs `train_index.csv`, then commit the txt file).
+  `splits/dev_terrains.txt` (5% of training terrains, seed 0; the full data is on the laptop, so the script runs
+  there; commit the txt file).
   *Tests:* item shapes; augmentation keeps `height[tx]` unchanged; dev terrains do not appear in train.
   *Learn:* data leakage and why we split by terrain.
 - [ ] **P1.2 Metrics.** `src/raynet/metrics.py`: pooled masked RMSE, per-map RMSE, region masks,
@@ -40,7 +41,7 @@ official Timeline page).
 - [ ] **P1.4 Evaluation script.** `src/raynet/evaluate.py` (+ `PriorModel` for E1). Writes
   `val_per_map.csv` and `val_summary.json` (docs/05_EVALUATION.md). *Accept:* runs locally on the
   val files with E1.
-- [ ] **P1.5 E1 and E1b [Owner runs on Kaggle, CPU or GPU].** Evaluate the prior on dev and val
+- [ ] **P1.5 E1 and E1b [laptop or Colab].** Evaluate the prior on dev and val
   for both bands; fit E1b on dev → `results/e1b_coeffs.json`.
   *Accept:* results table rows E1, E1b filled. *Learn:* why physics alone is weak in shadow here
   (diffraction is off in the data).
@@ -57,7 +58,7 @@ official Timeline page).
 - [ ] **P2.2 Training loop + budget [GPU, about 1 h].** `src/raynet/train.py`: YAML config, AMP,
   masked loss, cosine LR, checkpoint + resume, `metrics.csv`, `summary.json`, flags
   `--epochs --limit-batches --seed --resume --out --run-name`. CPU smoke test first. Then on
-  Kaggle measure samples/s for w = 24 and w = 32; choose w and N so that one 5.8 GHz run takes
+  Colab measure samples/s for w = 24 and w = 32; choose w and N so that one 5.8 GHz run takes
   about 1.5 h; write `configs/base.yaml`. *Learn:* AMP, cosine LR, checkpoints.
 - [ ] **P2.3 E0 full budget [GPU].** 5.8 GHz, then 415 MHz.
 - [ ] **P2.4 E2 [GPU].** 5.8 GHz, seed 0.

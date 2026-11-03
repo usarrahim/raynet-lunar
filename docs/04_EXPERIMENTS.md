@@ -30,7 +30,7 @@ augmentation. Log it.
 `<ID>_<band>_s<seed>`, for example `E4_58_s1`. Each run folder `runs/<name>/` contains:
 - `config.yaml` (full resolved config), `git_commit.txt`
 - `metrics.csv`: epoch, train_loss, dev_rmse_db, lr, time_s (dev is only monitored, no early stopping)
-- `last.pt` (the evaluated model) and `best_dev.pt` (not in git; download from Kaggle output and keep on Drive)
+- `last.pt` (the evaluated model) and `best_dev.pt` (not in git; they stay on Drive)
 - `summary.json`: params, best epoch, dev RMSE, train time, GPU type, peak memory
 - After evaluation: `val_per_map.csv` (one row per map: sample_id, terrain_id, n_valid,
   rmse_all, rmse_los_core, rmse_nlos_core, rmse_border, sse per region, coverage accuracy)
@@ -47,8 +47,7 @@ augmentation. Log it.
 | E3, E4 at 415 | 2 | 3.5 |
 | Evaluation, timing, TTA | - | 2 |
 | **Total** | | **≈ 29 h** |
-Kaggle gives a weekly free GPU quota (check the current number in Kaggle settings); Colab Pro
-units are the reserve. Track the real hours in `PROGRESS.md`.
+Colab units are the main budget; the free Kaggle GPU quota is the reserve. Track the real hours in `PROGRESS.md`.
 
 ## Results table (fill only from `val_summary.json` files)
 | ID | 415 MHz RMSE (dB) | 5.8 GHz RMSE (dB) | Combined | NLOS 5.8 | Border 5.8 | Params | ms/map |

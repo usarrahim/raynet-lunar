@@ -11,7 +11,8 @@ Internally they work in normalized units: `y_norm = (PL − pl_min) / (pl_max �
   stage 2 = 25% (the official 450 : 150 ratio). Masked loss. Official augmentation.
 - The official script selects "best" on val. We do not use that: stage 2 starts from stage 1's
   `_last.pt` (`--init-from <path>`), and we evaluate stage 2's `_last.pt`.
-- Run on Kaggle by cloning the official repo inside the notebook. Do not copy its code into
+- Run on Colab by cloning the official repo inside the notebook (start it through
+  `scripts/run_official.py`, docs/06_COMPUTE.md). Do not copy its code into
   our package. Evaluate its checkpoint with OUR evaluation code (same metrics and regions).
 
 ## E1 / E1b: physics prior (no training)
@@ -79,7 +80,7 @@ height, tx ─ polar grid (T=360, R=256) ─ ray encoder + ray scans ─ back to
 | gradient clip | 1.0 |
 | augmentation | 8 dihedral transforms, train only |
 | loss | masked MSE on `y_norm` |
-| epochs | set in P2.2 so that one 5.8 GHz run takes about 1.5 h on a Kaggle GPU |
+| epochs | set in P2.2 so that one 5.8 GHz run takes about 1.5 h on the chosen Colab GPU |
 | checkpoint | `last.pt` is the model we evaluate (no early stopping); `best_dev.pt` only for curves |
 
 ## Parameter and speed log
