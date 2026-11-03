@@ -22,8 +22,12 @@
   `web/prototype/index.html`.
 
 ## In progress
-- P0.4 Colab runner: `notebooks/colab_runner.ipynb` written (pinned to commit `8b5672f`).
+- P0.4 Colab runner: `notebooks/colab_runner.ipynb` written (pinned to commit `1d2db99`).
   Waiting for the owner: Kaggle token in Colab Secrets, data zip to Drive, first run of the cells.
+- P2.2 Training loop: code done and smoke-tested on the laptop. Waiting for the Colab speed
+  test (notebook section 6) to fix `epochs` and `model.width` in `configs/base.yaml`
+  (both PROVISIONAL now).
+- P1.6 quick official baseline: ready in the notebook (section 7); waiting for the owner to run it.
 
 ## Done
 - P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
@@ -34,6 +38,7 @@
   `<split>_summary.json`. Results table is made by `scripts/make_results_table.py`.
 - P1.5 E1 and E1b (2026-11-03): coefficients in `results/e1b_coeffs.json` (fit on dev only);
   summaries in `results/eval/E1*_*/`. Table rows E1, E1b filled (see docs/04_EXPERIMENTS.md).
+- P2.1 Model wrapper + SmallUNet (2026-11-03): `src/raynet/models/unet.py`, `wrapper.py`.
 - P0.1 Repo skeleton (2026-11-03)
 - P0.2 GitHub: https://github.com/usarrahim/raynet-lunar (public, branch `main`) (2026-11-03)
 - P0.3 Data check (2026-11-03): the FULL train + val data is on the laptop (`data/LunarRM`, 9 GB).
@@ -60,6 +65,16 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-03 · P2.1 + P2.2 (code) · `SmallUNet` (4 levels, GroupNorm, SiLU, optional zero
+  head), `PathlossNet` (9 channels of docs/02_PHYSICS.md §8 computed in fp32 outside autocast;
+  normalization from metadata.json per band; E2 direct, E3 = E1b prior + Δ), `raynet.config`
+  (base + override YAML), `configs/base.yaml` + E2/E3 configs, `raynet.train` (AdamW, warm-up +
+  cosine per step, AMP, grad clip, masked MSE, seeded data order per epoch, `last.pt` every
+  epoch with atomic save, `--resume auto` with a budget check, `metrics.csv`, `summary.json`),
+  `raynet.evaluate --run` (LAST checkpoint). Physics grid buffers are no longer saved in
+  checkpoints. · CPU and laptop-GPU smoke tests pass; E3 at step 0 equals E1b (tested). Laptop
+  speed (RTX 3050 Ti, 60 steps, batch 16): w=24 2.33M params 48 maps/s 2.65 GB; w=32 4.14M
+  params 38 maps/s 3.52 GB (this is NOT the Colab speed). · 52 tests pass.
 - 2026-11-03 · P1.4 + P1.5 · `PriorModel` (E1, E1b), `raynet.calibrate` (least squares on
   all valid dev pixels, float64 normal equations), `raynet.evaluate`, `raynet.results_table`.
   Laptop GPU (RTX 3050 Ti): 2330 val maps in about 8 s. · `python -m raynet.calibrate

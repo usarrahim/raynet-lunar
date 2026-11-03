@@ -52,7 +52,7 @@ official Timeline page).
     the method focus with the owner (this is the HW1 "weakest assumption" check).
 
 ## Phase 2: Physics inputs and residual (weeks 3-4)
-- [ ] **P2.1 Model wrapper + SmallUNet.** Input channels (02_PHYSICS.md §8), `SmallUNet`,
+- [x] **P2.1 Model wrapper + SmallUNet.** Input channels (02_PHYSICS.md §8), `SmallUNet`,
   wrapper that returns dB. *Tests:* shapes; with a zero-init head the residual model outputs
   exactly the prior.
 - [ ] **P2.2 Training loop + budget [GPU, about 1 h].** `src/raynet/train.py`: YAML config, AMP,
