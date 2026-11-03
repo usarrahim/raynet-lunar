@@ -1,0 +1,12 @@
+# Install PyTorch first, matched to your computer: https://pytorch.org/get-started/locally/
+# (Kaggle and Colab already have it.)
+torch>=2.2
+numpy>=1.24
+scipy>=1.10
+pyyaml>=6.0
+matplotlib>=3.7
+tqdm>=4.65
+onnx>=1.16
+onnxscript>=0.1      # needed by torch.onnx.export(dynamo=True)
+onnxruntime>=1.18
+pytest>=7.4

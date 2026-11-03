@@ -1,0 +1,42 @@
+# data and training outputs
+data/
+runs/
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.onnx.data
+!web/public/models/*.onnx
+!tests/fixtures/*.npy
+*.zip
+
+# secrets
+kaggle.json
+.env
+CLAUDE.local.md
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.ipynb_checkpoints/
+
+# web
+web/node_modules/
+web/dist/
+
+# os / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# owner personal guides (not part of the public repo)
+KILAVUZ.pdf
+PROMPTS_TR.md
