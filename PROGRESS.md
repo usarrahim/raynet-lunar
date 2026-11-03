@@ -2,7 +2,7 @@
 
 ## Status
 - Current phase: Phase 0 (setup)
-- Next task: P0.2
+- Next task: P0.3
 - Last update: 2026-11-03
 
 ## Decisions so far
@@ -22,6 +22,7 @@
 
 ## Done
 - P0.1 Repo skeleton (2026-11-03)
+- P0.2 GitHub: https://github.com/usarrahim/raynet-lunar (public, branch `main`) (2026-11-03)
 
 ## Setup checklist
 - [x] `setup/claude-skills/` copied to `.claude/skills/` (2026-11-03)
@@ -43,6 +44,8 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-03 · P0.2 · Added remote `origin` and pushed `main`. Commits show only the owner as
+  author (no AI co-author lines). · `git push` · Files visible on GitHub.
 - 2026-11-03 · P0.1 · `pyproject.toml` (package `raynet`, src layout, extra `dev`),
   `src/raynet/__init__.py`, `tests/test_smoke.py`, empty folders `configs/ scripts/ notebooks/
   splits/ results/`, MIT `LICENSE`, `git init` + first commit. `KILAVUZ.pdf` and `PROMPTS_TR.md`

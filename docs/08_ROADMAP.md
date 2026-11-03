@@ -14,7 +14,7 @@ official Timeline page).
   notebooks/ splits/ results/`, `LICENSE` (MIT, Abdurrahim Yılmaz, 2026), `git init`, first commit.
   *Accept:* `pip install -e ".[dev]"` and `pytest -q` pass on Windows.
   *Learn:* what a package is, why tests.
-- [ ] **P0.2 GitHub [Owner].** Owner makes an empty PUBLIC repo `raynet-lunar`; Claude Code adds the
+- [x] **P0.2 GitHub [Owner].** Owner makes an empty PUBLIC repo `raynet-lunar`; Claude Code adds the
   remote and pushes. *Accept:* files visible on GitHub.
 - [ ] **P0.3 Local data [Owner].** Owner downloads the val files and `metadata.json` from the
   Kaggle Data tab into `data/LunarRM/` (list in `docs/01_DATA.md`). Claude Code writes
