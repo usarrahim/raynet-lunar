@@ -35,7 +35,10 @@
   bytes; 19 files, same names and sizes as the laptop copy; flat layout). CPU runtime, no GPU.
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
 - P1.6 quick official baseline: RUNNING on Colab since 2026-11-14 19:42 UTC (Tesla T4),
-  `MyDrive/raynet/official_runs/P16_58_s0_firstU_*`, 10 epochs, about 9 min per epoch.
+  `MyDrive/raynet/official_runs/P16_58_s0_firstU_*`, 10 epochs, about 6 min per epoch.
+- Queued on the same runtime (`/content/queue.sh`, owner approved): after P1.6 → evaluate P1.6 on
+  dev with our metrics (`MyDrive/raynet/results/eval/P16_58_s0_firstU/`) → E3_58_s0 (P2.5,
+  16 epochs, `MyDrive/raynet/runs/E3_58_s0/`) → evaluate E3 on dev and val.
 
 ## Done
 - P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
@@ -70,6 +73,7 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
 |---|---|---|---|---|
 | 2026-11-14 | Colab | T4 | setup + data check + P2.2 speed test (19:33-19:42 UTC) | 0.15 |
 | 2026-11-14 | Colab | T4 | P1.6 official firstU, 10 epochs (started 19:42 UTC) | TBD |
+| 2026-11-14 | Colab | T4 | E3_58_s0, 16 epochs (queued after P1.6) | TBD |
 
 ## Open questions
 - Weekly Kaggle GPU quota of this account (see Kaggle settings).
