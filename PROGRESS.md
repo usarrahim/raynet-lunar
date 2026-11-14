@@ -31,8 +31,8 @@
 ## In progress
 - P0.4 Colab runner: `notebooks/colab_runner.ipynb` ready (uses `main`; runs log the exact
   commit). 2026-11-14: Kaggle Secrets set; data downloaded in Colab from Kaggle (zip 5.63 GB,
-  under 1 minute); copy to Drive `MyDrive/raynet/data/LunarRM.zip` started (Drive writes are
-  slow; the copy goes to `.zip.part` and is renamed only when complete). CPU runtime, no GPU.
+  under 1 minute) and saved on Drive as `MyDrive/raynet/data/LunarRM.zip` (5,628,361,638
+  bytes; 19 files, same names and sizes as the laptop copy; flat layout). CPU runtime, no GPU.
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
 - P2.2 Training loop: code done and smoke-tested on the laptop. Waiting for the Colab speed
   test (notebook section 6) to fix `epochs` and `model.width` in `configs/base.yaml`
