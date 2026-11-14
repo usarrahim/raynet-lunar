@@ -27,6 +27,8 @@
   2. Real lunar terrain (LOLA/LRO) in the demo website (task P4.5b), shown as a planning
      example without ground truth.
   Data-efficiency curve (train on 10/25/100% of the data) was proposed; not decided yet.
+- 2026-11-14: E5b dropped (owner approved). At width 24, E3 has 2,329,225 parameters and E4
+  2,367,913 (+1.7%), so E3 is already the parameter-matched control. Its GPU time goes to E7.
 
 ## In progress
 - P0.4 Colab runner: `notebooks/colab_runner.ipynb` ready (uses `main`; runs log the exact

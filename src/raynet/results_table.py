@@ -12,8 +12,8 @@ import re
 import statistics
 from pathlib import Path
 
-ROWS = ("E0", "E1", "E1b", "E2", "E3", "E4", "E5a", "E5b", "E6")
-NO_415 = {"E2", "E5a", "E5b"}  # planned for 5.8 GHz only
+ROWS = ("E0", "E1", "E1b", "E2", "E3", "E4", "E5a", "E6", "E7")  # E5b dropped (E3 is matched)
+NO_415 = {"E2", "E5a", "E7"}  # planned for 5.8 GHz only
 START, END = "<!-- results-table:start -->", "<!-- results-table:end -->"
 RUN_RE = re.compile(r"^(?P<id>E\d+[a-z]?)_(?P<band>415|58)(_s(?P<seed>\d+))?$")
 

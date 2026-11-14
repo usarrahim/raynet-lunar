@@ -10,7 +10,8 @@
 | E3 | E2 + residual on E1b | 58 (then 415) | 3 | yes | Does the prior help? Control for H1 |
 | E4 | RayNet | 58 (then 415) | 3 | yes | Main idea (H1, H2) |
 | E5a | E4 without scan | 58 | 1 | yes | Is the scan the reason? |
-| E5b | Parameter-matched Cartesian | 58 | 1 | yes | Is it only more parameters? |
+| E5b | DROPPED: E3 is within 1.7% of the E4 parameter count (docs/03_MODEL.md) | - | - | - | E3 answers it |
+| E7 | E3 or E4 + reflection-aware features (task P3.7) | 58 | 1 | yes | Does two-hop visibility help in shadow? |
 | E5c | One conditional E4 (both bands) | both | 1 | yes | Optional |
 | E6 | Test-time augmentation on best | both | - | inference only | Extra gain |
 
@@ -43,7 +44,8 @@ augmentation. Log it.
 | E0 58 + 415 | 2 | 4 |
 | E2 58 | 1 | 1.5 |
 | E3 58 × 3 seeds, E4 58 × 3 seeds | 6 | 10 |
-| E5a, E5b | 2 | 3.5 |
+| E5a | 1 | 2 |
+| E7 (replaces E5b) | 1 | 2 |
 | E3, E4 at 415 | 2 | 3.5 |
 | Evaluation, timing, TTA | - | 2 |
 | **Total** | | **≈ 29 h** |
@@ -63,8 +65,8 @@ measured separately in task P4.3.
 | E3 | TBD | TBD | TBD | TBD | TBD | TBD | - |
 | E4 | TBD | TBD | TBD | TBD | TBD | TBD | - |
 | E5a | - | TBD | - | TBD | TBD | TBD | - |
-| E5b | - | TBD | - | TBD | TBD | TBD | - |
 | E6 | TBD | TBD | TBD | TBD | TBD | TBD | - |
+| E7 | - | TBD | - | TBD | TBD | TBD | - |
 <!-- results-table:end -->
 
 Reference only (hidden test set, 450+150 epochs, not comparable): RadioUNet 4.66 / 6.28 / 5.47 dB.

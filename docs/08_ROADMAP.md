@@ -75,7 +75,8 @@ official Timeline page).
 - [ ] **P3.2 E4 seed 0 [GPU].** 5.8 GHz. Compare with E3 seed 0.
   - **Gate G2:** if E4 is more than 0.3 dB worse than E3, debug before spending more GPU hours.
 - [ ] **P3.3 Seeds 1 and 2 for E3 and E4 [GPU].** 5.8 GHz.
-- [ ] **P3.4 E5a and E5b [GPU].** 5.8 GHz.
+- [ ] **P3.4 E5a [GPU].** 5.8 GHz. (E5b dropped on 2026-11-14: E3 is already within 1.7% of
+  the E4 parameter count, so E3 is the parameter-matched control.)
 - [ ] **P3.5 415 MHz: E3 and E4 [GPU].** Seed 0 (more seeds if budget allows). E5c optional.
 - [ ] **P3.6 E6 test-time augmentation.** Best model, both bands.
   - **Gate G3:** if more than 75% of the GPU budget is used before Phase 4, drop E5c and extra seeds.

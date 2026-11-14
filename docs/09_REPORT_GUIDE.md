@@ -41,7 +41,8 @@ style as the HW1 proposal. Claude Code may draft sections, but every number must
 ## Questions to be ready for
 - Why polar coordinates? What happens near the transmitter?
 - Why is the knife-edge term only a feature here? (Diffraction is disabled in the data.)
-- How do you know the gain is not just more parameters? (E5b.)
+- How do you know the gain is not just more parameters? (E3 has almost the same parameter
+  count as E4: 2,329,225 vs 2,367,913, +1.7%. E5a has exactly the same parameters as E4.)
 - Why not use the frozen validation split for early stopping? (Dev split, last checkpoint.)
 - How fast is it, and on what hardware?
 - What part is your own contribution?

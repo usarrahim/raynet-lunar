@@ -61,8 +61,10 @@ height, tx ─ polar grid (T=360, R=256) ─ ray encoder + ray scans ─ back to
 
 ## E5: ablations
 - **E5a, no scan:** E4 with `S` replaced by `g` (same layers, same parameter count). Tests the scan.
-- **E5b, parameter-matched Cartesian:** E3 with a wider U-Net so that its parameter count is
-  within ±5% of E4. Tests "is it only more parameters?"
+- **E5b, parameter-matched Cartesian: DROPPED (2026-11-14, owner approved).** The plan was E3
+  with a wider U-Net, within ±5% of the E4 parameter count. At width 24, E3 itself has
+  2,329,225 parameters and E4 2,367,913 (+1.7%), so E3 already is the parameter-matched control
+  for "is it only more parameters?". The GPU time goes to E7 (reflection-aware features).
 - **E5c (optional), one conditional model:** E4 trained on both bands with a band channel,
   compared with two band-specific E4 models.
 
