@@ -34,10 +34,8 @@
   under 1 minute) and saved on Drive as `MyDrive/raynet/data/LunarRM.zip` (5,628,361,638
   bytes; 19 files, same names and sizes as the laptop copy; flat layout). CPU runtime, no GPU.
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
-- P2.2 Training loop: code done and smoke-tested on the laptop. Waiting for the Colab speed
-  test (notebook section 6) to fix `epochs` and `model.width` in `configs/base.yaml`
-  (both PROVISIONAL now).
-- P1.6 quick official baseline: ready in the notebook (section 7); waiting for the owner to run it.
+- P1.6 quick official baseline: RUNNING on Colab since 2026-11-14 19:42 UTC (Tesla T4),
+  `MyDrive/raynet/official_runs/P16_58_s0_firstU_*`, 10 epochs, about 9 min per epoch.
 
 ## Done
 - P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
@@ -49,6 +47,8 @@
 - P1.5 E1 and E1b (2026-11-03): coefficients in `results/e1b_coeffs.json` (fit on dev only);
   summaries in `results/eval/E1*_*/`. Table rows E1, E1b filled (see docs/04_EXPERIMENTS.md).
 - P2.1 Model wrapper + SmallUNet (2026-11-03): `src/raynet/models/unet.py`, `wrapper.py`.
+- P2.2 Training loop + budget (2026-11-14): `src/raynet/train.py`; `configs/base.yaml` fixed:
+  width 24, 16 epochs (speed test on Colab T4, see the log below).
 - P0.1 Repo skeleton (2026-11-03)
 - P0.2 GitHub: https://github.com/usarrahim/raynet-lunar (public, branch `main`) (2026-11-03)
 - P0.3 Data check (2026-11-03): the FULL train + val data is on the laptop (`data/LunarRM`, 9 GB).
@@ -68,6 +68,8 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
 ## GPU hour log
 | Date | Platform | GPU | Run | Hours |
 |---|---|---|---|---|
+| 2026-11-14 | Colab | T4 | setup + data check + P2.2 speed test (19:33-19:42 UTC) | 0.15 |
+| 2026-11-14 | Colab | T4 | P1.6 official firstU, 10 epochs (started 19:42 UTC) | TBD |
 
 ## Open questions
 - Weekly Kaggle GPU quota of this account (see Kaggle settings).
@@ -75,6 +77,14 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-14 · P2.2 speed test · Colab, Tesla T4 (15 GB), 2 CPUs, torch 2.14.1+cu130, commit
+  `3c23f7e`. E3 at 5.8 GHz, 300 steps, batch 16, AMP, 2 workers: width 24 (2,329,225 params)
+  76 maps/s, peak 2.65 GB, dev RMSE after 300 steps 6.045 dB (20 dev batches only); width 32
+  (4,137,825 params) 61 maps/s, peak 3.52 GB, 6.117 dB. Decision: width 24, 16 epochs
+  (24414 / 76 ≈ 5.4 min per epoch plus the dev pass → about 1.5 h per E3 run at 5.8 GHz).
+  Reason: more passes over the data for the same GPU time; a wider model is tested anyway in
+  E5b. Colab setup times: Drive zip → local 45 s, unzip about 2 min, full `check_data` PASS.
+  P1.6 official firstU: about 2.9 steps/s (≈ 9 min per epoch) on the same T4.
 - 2026-11-03 · P2.1 + P2.2 (code) · `SmallUNet` (4 levels, GroupNorm, SiLU, optional zero
   head), `PathlossNet` (9 channels of docs/02_PHYSICS.md §8 computed in fp32 outside autocast;
   normalization from metadata.json per band; E2 direct, E3 = E1b prior + Δ), `raynet.config`
