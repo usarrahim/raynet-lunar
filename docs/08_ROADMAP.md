@@ -45,7 +45,7 @@ official Timeline page).
   for both bands; fit E1b on dev → `results/e1b_coeffs.json`.
   *Accept:* results table rows E1, E1b filled. *Learn:* why physics alone is weak in shadow here
   (diffraction is off in the data).
-- [ ] **P1.6 Quick baseline + error map [GPU, about 2 h].** Official RadioUNet, 5.8 GHz, short
+- [x] **P1.6 Quick baseline + error map [GPU, about 2 h].** Official RadioUNet, 5.8 GHz, short
   run (10 epochs stage 1 only). Evaluate on dev with our regions.
   *Accept:* `results/p1_error_regions.md` with SSE share and RMSE per region and per distance bin.
   - **Gate G1:** if nlos_core + border hold less than 40% of the squared error, stop and discuss

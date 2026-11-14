@@ -36,11 +36,8 @@
   under 1 minute) and saved on Drive as `MyDrive/raynet/data/LunarRM.zip` (5,628,361,638
   bytes; 19 files, same names and sizes as the laptop copy; flat layout). CPU runtime, no GPU.
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
-- P1.6 quick official baseline: RUNNING on Colab since 2026-11-14 19:42 UTC (Tesla T4),
-  `MyDrive/raynet/official_runs/P16_58_s0_firstU_*`, 10 epochs, about 6 min per epoch.
-- Queued on the same runtime (`/content/queue.sh`, owner approved): after P1.6 → evaluate P1.6 on
-  dev with our metrics (`MyDrive/raynet/results/eval/P16_58_s0_firstU/`) → E3_58_s0 (P2.5,
-  16 epochs, `MyDrive/raynet/runs/E3_58_s0/`) → evaluate E3 on dev and val.
+- E3_58_s0 (P2.5): RUNNING on Colab since 2026-11-14 20:44 UTC (T4), 16 epochs,
+  `MyDrive/raynet/runs/E3_58_s0/`; the queue then evaluates it on dev and val.
 
 ## Done
 - P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
@@ -52,6 +49,8 @@
 - P1.5 E1 and E1b (2026-11-03): coefficients in `results/e1b_coeffs.json` (fit on dev only);
   summaries in `results/eval/E1*_*/`. Table rows E1, E1b filled (see docs/04_EXPERIMENTS.md).
 - P2.1 Model wrapper + SmallUNet (2026-11-03): `src/raynet/models/unet.py`, `wrapper.py`.
+- P1.6 Quick baseline + error map (2026-11-14): `results/p1_error_regions.md`. Gate G1 PASS
+  (nlos_core + border = 72.6% of the squared error of the baseline on dev).
 - P3.1 RayNet module (2026-11-14): `src/raynet/models/raynet.py` (polar branch, ray encoder,
   learned scan), kinds `e4` / `e5a` in the wrapper, configs `e4_raynet_58/415`, `e5a_noscan_58`.
 - P2.2 Training loop + budget (2026-11-14): `src/raynet/train.py`; `configs/base.yaml` fixed:
@@ -76,8 +75,8 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
 | Date | Platform | GPU | Run | Hours |
 |---|---|---|---|---|
 | 2026-11-14 | Colab | T4 | setup + data check + P2.2 speed test (19:33-19:42 UTC) | 0.15 |
-| 2026-11-14 | Colab | T4 | P1.6 official firstU, 10 epochs (started 19:42 UTC) | TBD |
-| 2026-11-14 | Colab | T4 | E3_58_s0, 16 epochs (queued after P1.6) | TBD |
+| 2026-11-14 | Colab | T4 | P1.6 official firstU, 10 epochs (19:42-20:43 UTC) + eval | 1.0 |
+| 2026-11-14 | Colab | T4 | E3_58_s0, 16 epochs (started 20:44 UTC) | TBD |
 
 ## Open questions
 - Weekly Kaggle GPU quota of this account (see Kaggle settings).
@@ -85,6 +84,14 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-14 · P1.6 · Official RadioWNet stage 1, 5.8 GHz, 10 epochs, seed 0, dev terrains out
+  (Colab T4, about 6 min per epoch, 19:42-20:43 UTC). Its own dev log stays at about 15.3 dB for
+  epochs 0-6 and ends at 14.581 dB (epoch 9). Our evaluation of `_last.pt` on dev: RMSE 14.579 dB,
+  regions los_core 8.42 / border 23.85 / nlos_core 32.73 dB, bias in nlos_core -31.09 dB.
+  Gate G1 PASS: nlos_core + border hold 72.6% of the squared error (threshold 40%).
+  Report: `results/p1_error_regions.md`. · `python -m raynet.evaluate --official ...` then
+  `python scripts/region_report.py ...` · The short-trained CNN misses the shadows; E1b
+  (no training) is better in every region on dev.
 - 2026-11-14 · P3.1 · `PolarBranch`: 7 polar inputs on T = 360, R = 256 (dr = 363/256 m,
   `PhysicsFeatures(n_r=...)`), stem + RayBlock(1) + RayScan + RayBlock(2) + RayScan +
   RayBlock(4), C = 32, back to Cartesian, concat with the 9 channels (41) → SmallUNet → Δ on
