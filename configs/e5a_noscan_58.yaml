@@ -1,0 +1,6 @@
+# E5a: E4 without the scan (S = g): same layers and parameters. Tests "is the scan the reason?".
+base: base.yaml
+id: E5a
+band: "58"
+model:
+  kind: e5a

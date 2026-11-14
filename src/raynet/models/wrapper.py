@@ -4,6 +4,8 @@ Normalization happens here and only here. Ranges come from metadata.json (per ba
 Physics features are computed in float32 outside autocast (atan2 and log10 are not safe in fp16).
   E2: y_norm = net(x)                 (direct prediction)
   E3: y_norm = prior_norm(E1b) + net(x)  (residual; zero-init head -> starts as the prior)
+  E4: like E3, plus 32 learned ray features from the polar branch (RayNet, models/raynet.py)
+  E5a: like E4, but the ray scans are replaced by the identity (same layers and parameters)
 """
 
 from __future__ import annotations
@@ -17,12 +19,16 @@ import torch
 from torch import nn
 
 from raynet.models.prior import e1b_design
+from raynet.models.raynet import PolarBranch
 from raynet.models.unet import SmallUNet
 from raynet.physics import BAND_HZ, PhysicsFeatures
 
 CHANNELS = ("height", "tx_onehot", "log_distance", "fspl", "los", "shadow", "nu", "j", "prior")
 LOG10_RMAX = math.log10(363.0)
-KINDS = ("e2", "e3")
+KINDS = ("e2", "e3", "e4", "e5a")
+RESIDUAL_KINDS = ("e3", "e4", "e5a")
+POLAR_KINDS = ("e4", "e5a")
+POLAR_DEFAULT = {"n_theta": 360, "n_r": 256, "channels": 32}
 
 
 @dataclass
@@ -46,28 +52,40 @@ class PathlossNet(nn.Module):
     """(height m, tx (row, col)) -> pathloss dB for one band."""
 
     def __init__(self, kind: str, band: str, ranges: Ranges, e1b_coeffs: list[float],
-                 width: int = 32) -> None:
+                 width: int = 32, polar: dict | None = None) -> None:
         """Build physics, backbone and the fixed buffers (frequency, E1b coefficients)."""
         super().__init__()
         if kind not in KINDS:
             raise ValueError(f"kind must be one of {KINDS}, got {kind!r}")
         self.kind, self.band, self.ranges, self.width = kind, band, ranges, width
         self.physics = PhysicsFeatures()
-        self.net = SmallUNet(len(CHANNELS), width, zero_head=(kind == "e3"))
+        self.polar_cfg = {**POLAR_DEFAULT, **(polar or {})} if kind in POLAR_KINDS else None
+        self.polar = (PolarBranch(**self.polar_cfg, use_scan=(kind == "e4"))
+                      if self.polar_cfg else None)
+        extra = self.polar.out_channels if self.polar is not None else 0
+        self.net = SmallUNet(len(CHANNELS) + extra, width, zero_head=(kind in RESIDUAL_KINDS))
         self.register_buffer("freq_hz", torch.tensor([BAND_HZ[band]]))
         self.register_buffer("coeffs", torch.tensor(e1b_coeffs).float().view(1, -1, 1, 1))
         self.e1b_coeffs = list(e1b_coeffs)
 
     def config(self) -> dict:
         """Everything needed to rebuild this model (saved in checkpoints)."""
-        return {"kind": self.kind, "band": self.band, "ranges": asdict(self.ranges),
-                "e1b_coeffs": self.e1b_coeffs, "width": self.width}
+        cfg = {"kind": self.kind, "band": self.band, "ranges": asdict(self.ranges),
+               "e1b_coeffs": self.e1b_coeffs, "width": self.width}
+        if self.polar_cfg:  # only polar models have this key (old E2/E3 checkpoints stay valid)
+            cfg["polar"] = dict(self.polar_cfg)
+        return cfg
 
     @classmethod
     def from_config(cls, cfg: dict) -> PathlossNet:
         """Rebuild from `config()`."""
         return cls(cfg["kind"], cfg["band"], Ranges(**cfg["ranges"]), cfg["e1b_coeffs"],
-                   cfg["width"])
+                   cfg["width"], cfg.get("polar"))
+
+    def set_export_mode(self, on: bool) -> None:
+        """ONNX-safe scan in the polar branch (no effect for E2/E3)."""
+        if self.polar is not None:
+            self.polar.set_export_mode(on)
 
     def norm_pl(self, pl_db: torch.Tensor) -> torch.Tensor:
         """dB -> normalized pathloss."""
@@ -109,8 +127,11 @@ class PathlossNet(nn.Module):
         """Normalized prediction y_norm (B, 1, H, W), float32."""
         with torch.autocast(device_type=height.device.type, enabled=False):
             x, prior = self.inputs(height, tx)
+        if self.polar is not None:
+            freq = self.freq_hz.expand(height.shape[0])
+            x = torch.cat([x, self.polar(height, tx, freq)], dim=1)
         out = self.net(x).float()
-        return self.norm_pl(prior) + out if self.kind == "e3" else out
+        return self.norm_pl(prior) + out if self.kind in RESIDUAL_KINDS else out
 
     def forward(self, height: torch.Tensor, tx: torch.Tensor) -> torch.Tensor:
         """Pathloss in dB (B, 1, H, W)."""

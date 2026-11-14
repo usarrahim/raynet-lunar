@@ -68,7 +68,7 @@ official Timeline page).
   `web/prototype/`, deploy (docs/07_WEBSITE.md).
 
 ## Phase 3: RayNet (weeks 5-6)
-- [ ] **P3.1 RayNet module.** `src/raynet/models/raynet.py` (docs/03_MODEL.md E4).
+- [x] **P3.1 RayNet module.** `src/raynet/models/raynet.py` (docs/03_MODEL.md E4).
   *Tests:* shapes; Cartesian → polar → Cartesian round trip of a smooth image has small error;
   `export_mode` on/off gives the same output; every parameter gets a gradient; full ONNX export
   + parity ≤ 0.01 dB. *Learn:* polar transform, circular padding, the learned scan.

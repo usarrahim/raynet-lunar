@@ -74,11 +74,16 @@ class PhysicsFeatures(nn.Module):
     """
 
     def __init__(self, size: int = 256, n_theta: int = 720, dr: float = 1.0,
-                 r_max: float = 363.0) -> None:
-        """Build the fixed polar and Cartesian grids (buffers, not saved in checkpoints)."""
+                 r_max: float = 363.0, n_r: int | None = None) -> None:
+        """Build the fixed polar and Cartesian grids (buffers, not saved in checkpoints).
+
+        Give `n_r` to fix the number of radii exactly (then dr = r_max / n_r).
+        """
         super().__init__()
+        if n_r is not None:
+            dr = r_max / n_r
         self.size, self.n_theta, self.dr = size, n_theta, dr
-        self.n_r = math.ceil(r_max / dr)
+        self.n_r = n_r if n_r is not None else math.ceil(r_max / dr)
         th = 2 * math.pi * torch.arange(n_theta, dtype=torch.float32) / n_theta
         ii, jj = torch.meshgrid(torch.arange(size, dtype=torch.float32),
                                 torch.arange(size, dtype=torch.float32), indexing="ij")
@@ -95,16 +100,28 @@ class PhysicsFeatures(nn.Module):
         z = F.grid_sample(height, g.view(b, 1, 1, 2), mode="bilinear", align_corners=True)
         return z.view(b, 1, 1) + TX_H_M
 
+    def polar_points(self, tx: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Pixel coordinates (y, x), each (B, T, R), of the polar sample points around the TX."""
+        b = tx.shape[0]
+        tr, tc = tx[:, 0].view(b, 1, 1), tx[:, 1].view(b, 1, 1)
+        yy = tr + self.sin.view(1, -1, 1) * self.r.view(1, 1, -1)
+        xx = tc + self.cos.view(1, -1, 1) * self.r.view(1, 1, -1)
+        return yy, xx
+
+    def to_polar(self, image: torch.Tensor, tx: torch.Tensor) -> torch.Tensor:
+        """Sample Cartesian maps (B, C, S, S) on the TX-centred polar grid -> (B, C, T, R)."""
+        s = self.size
+        yy, xx = self.polar_points(tx)
+        grid = torch.stack([xx / (s - 1) * 2 - 1, yy / (s - 1) * 2 - 1], dim=-1)  # (x, y)!
+        return F.grid_sample(image, grid, mode="bilinear", padding_mode="border",
+                             align_corners=True)
+
     def polar(self, height: torch.Tensor, tx: torch.Tensor,
               freq_hz: torch.Tensor) -> dict[str, torch.Tensor]:
         """Polar maps (B, T, R): terrain, angles, horizon, LoS, shadow, nu, inside-tile mask."""
         b, s = height.shape[0], self.size
-        tr, tc = tx[:, 0].view(b, 1, 1), tx[:, 1].view(b, 1, 1)
-        yy = tr + self.sin.view(1, -1, 1) * self.r.view(1, 1, -1)
-        xx = tc + self.cos.view(1, -1, 1) * self.r.view(1, 1, -1)
-        grid = torch.stack([xx / (s - 1) * 2 - 1, yy / (s - 1) * 2 - 1], dim=-1)  # (x, y)!
-        hs = F.grid_sample(height, grid, mode="bilinear", padding_mode="border",
-                           align_corners=True)[:, 0]
+        yy, xx = self.polar_points(tx)
+        hs = self.to_polar(height, tx)[:, 0]
         inside = ((xx >= 0) & (xx <= s - 1) & (yy >= 0) & (yy <= s - 1)).float()
         z_tx = self.tx_height(height, tx)
         r = self.r.view(1, 1, -1).expand_as(hs)

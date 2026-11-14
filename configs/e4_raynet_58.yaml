@@ -1,0 +1,6 @@
+# E4: RayNet = E3 + TX-centred polar branch with learned ray scans (main idea, H1 and H2).
+base: base.yaml
+id: E4
+band: "58"
+model:
+  kind: e4

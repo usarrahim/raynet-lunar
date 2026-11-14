@@ -1,0 +1,6 @@
+# E4 at 415 MHz.
+base: base.yaml
+id: E4
+band: "415"
+model:
+  kind: e4

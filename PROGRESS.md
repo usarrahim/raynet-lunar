@@ -50,6 +50,8 @@
 - P1.5 E1 and E1b (2026-11-03): coefficients in `results/e1b_coeffs.json` (fit on dev only);
   summaries in `results/eval/E1*_*/`. Table rows E1, E1b filled (see docs/04_EXPERIMENTS.md).
 - P2.1 Model wrapper + SmallUNet (2026-11-03): `src/raynet/models/unet.py`, `wrapper.py`.
+- P3.1 RayNet module (2026-11-14): `src/raynet/models/raynet.py` (polar branch, ray encoder,
+  learned scan), kinds `e4` / `e5a` in the wrapper, configs `e4_raynet_58/415`, `e5a_noscan_58`.
 - P2.2 Training loop + budget (2026-11-14): `src/raynet/train.py`; `configs/base.yaml` fixed:
   width 24, 16 epochs (speed test on Colab T4, see the log below).
 - P0.1 Repo skeleton (2026-11-03)
@@ -81,6 +83,17 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-14 · P3.1 · `PolarBranch`: 7 polar inputs on T = 360, R = 256 (dr = 363/256 m,
+  `PhysicsFeatures(n_r=...)`), stem + RayBlock(1) + RayScan + RayBlock(2) + RayScan +
+  RayBlock(4), C = 32, back to Cartesian, concat with the 9 channels (41) → SmallUNet → Δ on
+  E1b. `export_mode` switches cummax → `scan_max_inclusive`. `physics.to_polar` added (generic
+  polar sampling). Tests: shapes, round trip, scan equality, export_mode equality, E4 = E1b at
+  init, all parameters get gradients, E5a has the same parameters, full E4 ONNX export
+  (dynamo, opset 18, one file) parity ≤ 0.01 dB. · `pytest -q` · 63 tests pass.
+  Parameters (w = 24): E3 2,329,225, E4 2,367,913 (+1.7%). Laptop RTX 3050 Ti, batch 16:
+  E3 41 maps/s, 2.65 GB; E4 peak 5.81 GB (more than the 4 GB card, so it spills to shared
+  memory and runs at about 1 map/s; not usable on the laptop, fine on a 15 GB T4). E4 speed on
+  the T4: TBD.
 - 2026-11-14 · P2.2 speed test · Colab, Tesla T4 (15 GB), 2 CPUs, torch 2.14.1+cu130, commit
   `3c23f7e`. E3 at 5.8 GHz, 300 steps, batch 16, AMP, 2 workers: width 24 (2,329,225 params)
   76 maps/s, peak 2.65 GB, dev RMSE after 300 steps 6.045 dB (20 dev batches only); width 32
