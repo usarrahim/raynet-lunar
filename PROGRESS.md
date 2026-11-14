@@ -38,6 +38,10 @@
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
 - E3_58_s0 (P2.5): RUNNING on Colab since 2026-11-14 20:44 UTC (T4), 16 epochs,
   `MyDrive/raynet/runs/E3_58_s0/`; the queue then evaluates it on dev and val.
+  At 21:30 UTC: 7 of 16 epochs done, `last.pt` on Drive (21:25 UTC). If the runtime stopped:
+  new GPU session → setup (code, data) → `python -m raynet.train --config
+  configs/e3_residual_58.yaml --data-root /content/data/LunarRM --seed 0 --out
+  /content/drive/MyDrive/raynet/runs --resume auto`, then evaluate dev and val.
 
 ## Done
 - P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
