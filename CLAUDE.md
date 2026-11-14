@@ -87,6 +87,9 @@
 - Data check: `python -m raynet.check_data --root data/LunarRM`
 - Train: `python -m raynet.train --config configs/e3_residual_58.yaml --data-root <root>`
 - Evaluate: `python -m raynet.evaluate --run runs/<name> --split val --data-root <root>`
+  (priors: `--model e1|e1b --band 58`; official baseline: `--official <ckpt>_last.pt --official-repo <clone>`)
+- Results table: `python scripts/make_results_table.py`; region report / Gate G1:
+  `python scripts/region_report.py <baseline dev_summary.json> [others...] --out results/<name>.md`
 - Export ONNX: `python -m raynet.export_onnx --run runs/<name> --out web/public/models/raynet.onnx`
 - Website: `cd web` then `npm install` and `npm run dev`
 

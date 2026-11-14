@@ -7,6 +7,8 @@ Examples:
   python -m raynet.evaluate --model e1  --band 58 --split dev --data-root data/LunarRM
   python -m raynet.evaluate --model e1b --band 58 --split val --data-root data/LunarRM
   python -m raynet.evaluate --run runs/E3_58_s0 --split val --data-root data/LunarRM
+  python -m raynet.evaluate --official <out>/P16_58_s0_firstU_last.pt --official-repo <clone>
+      --split dev --data-root data/LunarRM
 """
 
 from __future__ import annotations
@@ -24,6 +26,7 @@ from torch.utils.data import DataLoader, Dataset
 from raynet.data import BANDS, make_datasets
 from raynet.metrics import MetricAccumulator
 from raynet.models.prior import PriorModel, load_e1b_coeffs
+from raynet.models.radiounet_wrap import load_official
 from raynet.models.unet import count_params
 from raynet.models.wrapper import PathlossNet
 from raynet.physics import BAND_HZ, PhysicsFeatures
@@ -95,10 +98,29 @@ def run_predictor(run_dir: Path, device: str) -> tuple[Predictor, str, int, str]
     return predict, run_dir.name, count_params(model), ck["model_config"]["band"]
 
 
+def official_predictor(ckpt: Path, repo: Path, data_root: Path,
+                       device: str) -> tuple[Predictor, str, int, str]:
+    """Official baseline checkpoint (use its *_last.pt, never *_best.pt chosen on val)."""
+    if ckpt.name.endswith("_best.pt"):
+        raise SystemExit("use the official *_last.pt; *_best.pt was chosen on val")
+    model, info = load_official(ckpt, repo, data_root, device)
+    print(f"official checkpoint {ckpt.name}: phase {info.get('phase')}, epoch {info.get('epoch')}")
+
+    def predict(h: torch.Tensor, tx: torch.Tensor, f: torch.Tensor):
+        return model(h, tx), None
+
+    params = sum(p.numel() for p in model.parameters())
+    return predict, ckpt.name.removesuffix("_last.pt"), params, info["band"]
+
+
 def build_predictor(args: argparse.Namespace, device: str) -> tuple[Predictor, str, int]:
     """Model from the command line arguments; returns (predictor, name, parameter count)."""
     if args.run:
         predict, name, params, args.band = run_predictor(args.run, device)
+        return predict, name, params
+    if args.official:
+        predict, name, params, args.band = official_predictor(
+            args.official, args.official_repo, args.data_root, device)
         return predict, name, params
     if args.band is None:
         raise SystemExit("--band is needed with --model")
@@ -116,6 +138,10 @@ def main(argv: list[str] | None = None) -> dict:
     p.add_argument("--data-root", type=Path, required=True)
     p.add_argument("--model", choices=["e1", "e1b"], default=None)
     p.add_argument("--run", type=Path, default=None, help="trained run folder (uses last.pt)")
+    p.add_argument("--official", type=Path, default=None,
+                   help="official baseline checkpoint *_last.pt (E0, P1.6)")
+    p.add_argument("--official-repo", type=Path, default=Path("/content/official"),
+                   help="clone of the official challenge repository")
     p.add_argument("--coeffs", type=Path, default=Path("results/e1b_coeffs.json"))
     p.add_argument("--band", choices=list(BANDS), default=None, help="taken from the run")
     p.add_argument("--split", choices=["dev", "val"], required=True)
@@ -137,7 +163,14 @@ def main(argv: list[str] | None = None) -> dict:
             "commit": git_commit(),
             "device": device_name(args.device), "eval_seconds": round(seconds, 1),
             "smoke_test": args.max_batches is not None}
-    out = args.out or (args.run if args.run else Path("results/eval") / f"{name}_{args.band}")
+    if args.out:
+        out = args.out
+    elif args.run:
+        out = args.run
+    elif args.official:
+        out = Path("results/eval") / name
+    else:
+        out = Path("results/eval") / f"{name}_{args.band}"
     s = write_outputs(acc, out, args.split, info)
     reg = s.get("regions", {})
     print(f"{name} {args.band} {args.split}: RMSE {s['rmse_db']:.3f} dB, bias {s['bias_db']:.3f}"
