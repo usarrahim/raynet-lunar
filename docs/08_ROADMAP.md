@@ -55,7 +55,7 @@ official Timeline page).
 - [x] **P2.1 Model wrapper + SmallUNet.** Input channels (02_PHYSICS.md §8), `SmallUNet`,
   wrapper that returns dB. *Tests:* shapes; with a zero-init head the residual model outputs
   exactly the prior.
-- [ ] **P2.2 Training loop + budget [GPU, about 1 h].** `src/raynet/train.py`: YAML config, AMP,
+- [x] **P2.2 Training loop + budget [GPU, about 1 h].** `src/raynet/train.py`: YAML config, AMP,
   masked loss, cosine LR, checkpoint + resume, `metrics.csv`, `summary.json`, flags
   `--epochs --limit-batches --seed --resume --out --run-name`. CPU smoke test first. Then on
   Colab measure samples/s for w = 24 and w = 32; choose w and N so that one 5.8 GHz run takes
