@@ -45,6 +45,9 @@ too slow for memory maps.
 3. Colab → left bar → key icon (**Secrets**). Add `KAGGLE_API_TOKEN` (the token string), **or**
    `KAGGLE_USERNAME` and `KAGGLE_KEY` (the two values inside `kaggle.json`).
    Turn on "Notebook access" for each secret. Never put the token in a notebook cell or in git.
+   - Tested 2026-11-14: the current Kaggle CLI (2.2.5) only accepts the new token. The classic
+     username + 32-character key works with the old CLI `kaggle==1.6.17` (it prints an
+     "outdated API" warning, which is fine). The notebook picks the right CLI by itself.
 
 ## Every session
 1. Open `notebooks/colab_runner.ipynb` from GitHub in Colab (File → Open notebook → GitHub →
