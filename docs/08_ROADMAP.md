@@ -79,6 +79,12 @@ official Timeline page).
 - [ ] **P3.5 415 MHz: E3 and E4 [GPU].** Seed 0 (more seeds if budget allows). E5c optional.
 - [ ] **P3.6 E6 test-time augmentation.** Best model, both bands.
   - **Gate G3:** if more than 75% of the GPU budget is used before Phase 4, drop E5c and extra seeds.
+- [ ] **P3.7 Reflection-aware features (E7) [GPU].** Added 2026-11-14 (owner approved).
+  Diffraction is off in the data, so power in shadow comes from reflections: a shadow pixel can
+  only get signal from a surface that the TX sees and that also sees the pixel ("two-hop
+  visibility"). Design the feature(s) from the error analysis of E3 (which regions keep the
+  error), write the design in docs/03_MODEL.md first, then train E7 = E3 or E4 + these features
+  (same budget). *Accept:* region table E3 vs E7 on dev, then val.
 
 ## Phase 4: Analysis, website, report (weeks 7-8)
 - [ ] **P4.1 Hypothesis tests.** H1, H2, H3 (docs/05_EVALUATION.md §3) → `results/hypotheses.md`.
@@ -87,6 +93,9 @@ official Timeline page).
 - [ ] **P4.4 Export.** Best model to ONNX (contract in docs/07_WEBSITE.md) + `model_card.json`
   + parity test.
 - [ ] **P4.5 Website W1.** Full demo, validation-tile comparison, results section, deploy.
+- [ ] **P4.5b Real lunar terrain in the demo.** Added 2026-11-14 (owner approved). Public LOLA/LRO
+  elevation tiles (for example an Artemis south-pole candidate region), resampled to 1 m/px
+  256×256 tiles. No ground truth there: show it as a planning example, not as a measured result.
 - [ ] **P4.6 README.** Results table, demo link, how to reproduce, licences, AI-use statement.
 - [ ] **P4.7 Report and slides.** docs/09_REPORT_GUIDE.md.
 - [ ] **P4.8 (optional) Challenge submission [Owner].** Test inputs and deadline: see the official

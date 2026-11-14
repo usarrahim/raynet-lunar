@@ -20,6 +20,13 @@
 - 2026-11-03: Website plan: static site + onnxruntime-web. The physics part was tested in a
   browser (WASM): about 70 ms per map, 0.0002 dB difference to Python. Preview page in
   `web/prototype/index.html`.
+- 2026-11-14: Contribution discussion. Owner approved two additions:
+  1. Reflection-aware features (task P3.7, experiment E7): diffraction is off, so signal in
+     shadow comes from reflections, which a ray-wise scan from the TX cannot see directly.
+     Design after the E3 error analysis.
+  2. Real lunar terrain (LOLA/LRO) in the demo website (task P4.5b), shown as a planning
+     example without ground truth.
+  Data-efficiency curve (train on 10/25/100% of the data) was proposed; not decided yet.
 
 ## In progress
 - P0.4 Colab runner: `notebooks/colab_runner.ipynb` ready (uses `main`; runs log the exact
