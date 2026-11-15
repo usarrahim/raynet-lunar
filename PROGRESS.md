@@ -38,7 +38,8 @@
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
 - E3_58_s0 (P2.5): RUNNING on Colab since 2026-11-14 20:44 UTC (T4), 16 epochs,
   `MyDrive/raynet/runs/E3_58_s0/`; the queue then evaluates it on dev and val.
-  At 21:30 UTC: 7 of 16 epochs done, `last.pt` on Drive (21:25 UTC). If the runtime stopped:
+  The runtime stopped at about 21:48 UTC after 11 epochs (dev RMSE 5.13 dB at epoch 10).
+  Resumed 2026-11-15 07:57 UTC on a new T4 runtime ("resumed ... at epoch 11"). If it stops again:
   new GPU session → setup (code, data) → `python -m raynet.train --config
   configs/e3_residual_58.yaml --data-root /content/data/LunarRM --seed 0 --out
   /content/drive/MyDrive/raynet/runs --resume auto`, then evaluate dev and val.
@@ -80,7 +81,8 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
 |---|---|---|---|---|
 | 2026-11-14 | Colab | T4 | setup + data check + P2.2 speed test (19:33-19:42 UTC) | 0.15 |
 | 2026-11-14 | Colab | T4 | P1.6 official firstU, 10 epochs (19:42-20:43 UTC) + eval | 1.0 |
-| 2026-11-14 | Colab | T4 | E3_58_s0, 16 epochs (started 20:44 UTC) | TBD |
+| 2026-11-14 | Colab | T4 | E3_58_s0 epochs 0-10 (20:44-21:48 UTC, runtime then stopped) | 1.1 |
+| 2026-11-15 | Colab | T4 | setup + E3_58_s0 epochs 11-15 + eval (from 07:53 UTC) | TBD |
 
 ## Open questions
 - Weekly Kaggle GPU quota of this account (see Kaggle settings).
