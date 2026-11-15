@@ -36,15 +36,10 @@
   under 1 minute) and saved on Drive as `MyDrive/raynet/data/LunarRM.zip` (5,628,361,638
   bytes; 19 files, same names and sizes as the laptop copy; flat layout). CPU runtime, no GPU.
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
-- E3_58_s0 (P2.5): RUNNING on Colab since 2026-11-14 20:44 UTC (T4), 16 epochs,
-  `MyDrive/raynet/runs/E3_58_s0/`; the queue then evaluates it on dev and val.
-  The runtime stopped at about 21:48 UTC after 11 epochs (dev RMSE 5.13 dB at epoch 10).
-  Resumed 2026-11-15 07:57 UTC on a new T4 runtime ("resumed ... at epoch 11"). If it stops again:
-  new GPU session → setup (code, data) → `python -m raynet.train --config
-  configs/e3_residual_58.yaml --data-root /content/data/LunarRM --seed 0 --out
-  /content/drive/MyDrive/raynet/runs --resume auto`, then evaluate dev and val.
+- Nothing is running on Colab now (2026-11-15).
 
 ## Done
+- P2.5 E3 seed 0 at 5.8 GHz (2026-11-15): val RMSE 5.30 dB (results/eval/E3_58_s0/).
 - P1.1 Loader + dev split (2026-11-03): `src/raynet/data.py`, `splits/dev_terrains.txt`
   (20 of 392 multi + 286 of 5728 single terrains; 24414 train / 1306 dev / 2330 val maps per band).
 - P1.2 Metrics (2026-11-03): `src/raynet/metrics.py`.
@@ -82,7 +77,7 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
 | 2026-11-14 | Colab | T4 | setup + data check + P2.2 speed test (19:33-19:42 UTC) | 0.15 |
 | 2026-11-14 | Colab | T4 | P1.6 official firstU, 10 epochs (19:42-20:43 UTC) + eval | 1.0 |
 | 2026-11-14 | Colab | T4 | E3_58_s0 epochs 0-10 (20:44-21:48 UTC, runtime then stopped) | 1.1 |
-| 2026-11-15 | Colab | T4 | setup + E3_58_s0 epochs 11-15 + eval (from 07:53 UTC) | TBD |
+| 2026-11-15 | Colab | T4 | setup + E3_58_s0 epochs 11-15 + eval (07:53-08:27 UTC) | 0.6 |
 
 ## Open questions
 - Weekly Kaggle GPU quota of this account (see Kaggle settings).
@@ -90,6 +85,15 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-15 · P2.5 · E3_58_s0 (E3, 5.8 GHz, seed 0, width 24, 16 epochs, T4; epochs 0-10 on
+  2026-11-14, runtime stopped, resumed at epoch 11 with `--resume auto`). Run logs copied from
+  Drive to `results/runs/E3_58_s0/` (config, metrics, summary, commit `0cac9ab`), evaluation of
+  the LAST checkpoint to `results/eval/E3_58_s0/`. Val: RMSE 5.295 dB (E1b 6.959, so 1.66 dB
+  better), regions los_core 4.52 / border 10.15 / nlos_core 5.45 dB, bias -0.04 dB, coverage
+  accuracy at 120 dB 97.3% (F1 not covered 0.910). Dev: 5.096 dB. Dev region report with P1.6
+  and E1b: `results/p2_e3_regions_dev.md` (E3 better than E1b in every region and distance bin;
+  border is now the largest shadow-related error: 9.95 dB RMSE, 29.1% of the SSE on dev).
+  Dev curve: 5.88 dB (epoch 0) → 5.10 dB (epoch 15), still slowly improving at the end.
 - 2026-11-14 · P1.6 · Official RadioWNet stage 1, 5.8 GHz, 10 epochs, seed 0, dev terrains out
   (Colab T4, about 6 min per epoch, 19:42-20:43 UTC). Its own dev log stays at about 15.3 dB for
   epochs 0-6 and ends at 14.581 dB (epoch 9). Our evaluation of `_last.pt` on dev: RMSE 14.579 dB,

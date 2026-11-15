@@ -62,7 +62,7 @@ official Timeline page).
   about 1.5 h; write `configs/base.yaml`. *Learn:* AMP, cosine LR, checkpoints.
 - [ ] **P2.3 E0 full budget [GPU].** 5.8 GHz, then 415 MHz.
 - [ ] **P2.4 E2 [GPU].** 5.8 GHz, seed 0.
-- [ ] **P2.5 E3 [GPU].** 5.8 GHz, seed 0. Update the results table and region bar chart.
+- [x] **P2.5 E3 [GPU].** 5.8 GHz, seed 0. Update the results table and region bar chart.
   *Learn:* residual learning; what changed between E0, E2 and E3 and why.
 - [ ] **P2.6 (optional) Website W0.** Export the E1b prior to ONNX, build the site skeleton from
   `web/prototype/`, deploy (docs/07_WEBSITE.md).

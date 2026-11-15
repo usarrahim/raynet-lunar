@@ -62,7 +62,7 @@ measured separately in task P4.3.
 | E1 | 7.45 | 13.11 | 10.28 | 30.09 | 24.88 | 0 | 1 |
 | E1b | 5.57 | 6.96 | 6.26 | 9.45 | 13.92 | 5 | 1 |
 | E2 | - | TBD | - | TBD | TBD | TBD | - |
-| E3 | TBD | TBD | TBD | TBD | TBD | TBD | - |
+| E3 | TBD | 5.30 | TBD | 5.45 | 10.15 | 2329225 | 1 |
 | E4 | TBD | TBD | TBD | TBD | TBD | TBD | - |
 | E5a | - | TBD | - | TBD | TBD | TBD | - |
 | E6 | TBD | TBD | TBD | TBD | TBD | TBD | - |
