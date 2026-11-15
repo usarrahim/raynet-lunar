@@ -36,7 +36,13 @@
   under 1 minute) and saved on Drive as `MyDrive/raynet/data/LunarRM.zip` (5,628,361,638
   bytes; 19 files, same names and sizes as the laptop copy; flat layout). CPU runtime, no GPU.
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
-- Nothing is running on Colab now (2026-11-15).
+- E4_58_s0 (P3.2): RUNNING on Colab since 2026-11-15 08:59 UTC (T4), 16 epochs,
+  `MyDrive/raynet/runs/E4_58_s0/`; then evaluation on dev and val (same job). Speed on the T4:
+  500 steps in about 4.8 min (≈ 1.7 steps/s ≈ 28 maps/s, E3: ≈ 73 maps/s), so about 15-16 min
+  per epoch and about 4.2 h for the run (estimate). Peak GPU memory 5.81 GB.
+  If the runtime stops: new GPU session → setup → `python -m raynet.train --config
+  configs/e4_raynet_58.yaml --data-root /content/data/LunarRM --seed 0 --out
+  /content/drive/MyDrive/raynet/runs --resume auto`, then evaluate dev and val.
 
 ## Done
 - P2.5 E3 seed 0 at 5.8 GHz (2026-11-15): val RMSE 5.30 dB (results/eval/E3_58_s0/).
@@ -78,6 +84,7 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
 | 2026-11-14 | Colab | T4 | P1.6 official firstU, 10 epochs (19:42-20:43 UTC) + eval | 1.0 |
 | 2026-11-14 | Colab | T4 | E3_58_s0 epochs 0-10 (20:44-21:48 UTC, runtime then stopped) | 1.1 |
 | 2026-11-15 | Colab | T4 | setup + E3_58_s0 epochs 11-15 + eval (07:53-08:27 UTC) | 0.6 |
+| 2026-11-15 | Colab | T4 | E4_58_s0, 16 epochs + eval (from 08:55 UTC) | TBD |
 
 ## Open questions
 - Weekly Kaggle GPU quota of this account (see Kaggle settings).
