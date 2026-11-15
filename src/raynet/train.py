@@ -169,6 +169,9 @@ def train(cfg: dict, args: argparse.Namespace) -> dict:
           f"maps, {steps_per_epoch} steps/epoch, device {device_name(args.device)}, amp {amp}")
 
     dev_loader = make_loader(sets["dev"], tc["batch_size"], False, tc["num_workers"], 0)
+    # Speed options: they change how the same maths runs, not the maths or the checkpoint format.
+    torch.backends.cudnn.benchmark = device.type == "cuda" and not args.no_cudnn_benchmark
+    forward_norm = torch.compile(model.forward_norm) if args.compile else model.forward_norm
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
     speeds = []
@@ -186,7 +189,7 @@ def train(cfg: dict, args: argparse.Namespace) -> dict:
             gt, m = batch["pl"].to(device, non_blocking=True), batch["mask"].to(device)
             opt.zero_grad(set_to_none=True)
             with torch.autocast(device.type, dtype=torch.float16, enabled=amp):
-                pred = model.forward_norm(h, tx)
+                pred = forward_norm(h, tx)
             loss = masked_mse(pred.float(), model.norm_pl(gt), m)
             scaler.scale(loss).backward()
             scaler.unscale_(opt)
@@ -232,6 +235,8 @@ def train(cfg: dict, args: argparse.Namespace) -> dict:
         "peak_gpu_mem_gb": torch.cuda.max_memory_allocated(device) / 1e9
         if device.type == "cuda" else None,
         "commit": git_commit(),
+        "speed_options": {"compile": bool(args.compile),
+                          "cudnn_benchmark": torch.backends.cudnn.benchmark},
     }
     if (run_dir / "metrics.csv").exists():
         with open(run_dir / "metrics.csv", encoding="utf-8") as f:
@@ -258,6 +263,10 @@ def main(argv: list[str] | None = None) -> dict:
     p.add_argument("--resume", default=None, help="'auto' or a checkpoint path")
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     p.add_argument("--log-every", type=int, default=200)
+    p.add_argument("--compile", action="store_true",
+                   help="torch.compile the training forward (Linux GPU; same maths, faster)")
+    p.add_argument("--no-cudnn-benchmark", action="store_true",
+                   help="turn off cudnn.benchmark (on by default for CUDA)")
     args = p.parse_args(argv)
     cfg = apply_overrides(load_config(args.config), args)
     s = train(cfg, args)
