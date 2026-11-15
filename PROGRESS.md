@@ -38,8 +38,10 @@
   Next: GPU runtime → sections 1-4 → 5 (speed test) → 6 (P1.6).
 - E4_58_s0 (P3.2): RUNNING on Colab since 2026-11-15 08:59 UTC (T4), 16 epochs,
   `MyDrive/raynet/runs/E4_58_s0/`; then evaluation on dev and val (same job). Speed on the T4:
-  500 steps in about 4.8 min (≈ 1.7 steps/s ≈ 28 maps/s, E3: ≈ 73 maps/s), so about 15-16 min
-  per epoch and about 4.2 h for the run (estimate). Peak GPU memory 5.81 GB.
+  epoch 0 took 833 s of training (30 maps/s; E3: about 73 maps/s), dev RMSE 5.738 dB after
+  epoch 0 (E3: 5.876), so about 14.5 min per epoch and about 3.9 h for the run (estimate,
+  end about 12:55 UTC). Peak GPU memory 5.81 GB. Queued after it on the same runtime:
+  speed test eager vs `--compile` (600 steps each, `/content/after.log`).
   If the runtime stops: new GPU session → setup → `python -m raynet.train --config
   configs/e4_raynet_58.yaml --data-root /content/data/LunarRM --seed 0 --out
   /content/drive/MyDrive/raynet/runs --resume auto`, then evaluate dev and val.
@@ -92,6 +94,15 @@ All TBD. Table: `docs/04_EXPERIMENTS.md`.
   does not need them).
 
 ## Log (newest first: date · task · what changed · how to run · result)
+- 2026-11-15 · speed · E4 is about 2.4x slower per step than E3. Laptop profile (B = 4,
+  RTX 3050 Ti): E3 step 67 ms, E4 step 160 ms; ray encoder forward alone 26 ms; most CUDA time
+  is small elementwise kernels (casts, adds, GroupNorm) and NCHW↔NHWC copies.
+  `cudnn.benchmark` −7% (148 ms); channels_last slower (200 ms), not used. Added to
+  `raynet.train`: cudnn.benchmark on by default and `--compile` (torch.compile of the training
+  forward; fuses the elementwise kernels; not available on Windows). Neither changes the maths,
+  the parameters or the checkpoint format; both are logged in `summary.json`
+  (`speed_options`). `tests/test_compile.py` checks compiled = eager (skipped on Windows).
+  Colab measurement of `--compile`: TBD (queued after E4_58_s0).
 - 2026-11-15 · P2.5 · E3_58_s0 (E3, 5.8 GHz, seed 0, width 24, 16 epochs, T4; epochs 0-10 on
   2026-11-14, runtime stopped, resumed at epoch 11 with `--resume auto`). Run logs copied from
   Drive to `results/runs/E3_58_s0/` (config, metrics, summary, commit `0cac9ab`), evaluation of
